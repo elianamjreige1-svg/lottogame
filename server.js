@@ -10,17 +10,28 @@ let canplay = false;
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
 
 app.use(express.json());
 app.use(express.static("public"));
 
 // ================= DB =================
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'lotto'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+pool.on('error', (err) => {
+  console.error("MySQL Pool Error:", err);
 });
 
 const query = util.promisify(pool.query).bind(pool);
@@ -109,7 +120,7 @@ app.get("/start", async (req, res) => {
     resultsbyuser = [];
     winprice = 0;
 
-    await query('UPDATE users SET played = "0"');
+    await query('UPDATE users SET played = 0');
 
     log("Game started");
 	io.emit("announce", { ancmtmsg: "done" });
@@ -125,7 +136,7 @@ app.post("/ticket", async (req, res) => {
 
     try {
         const result = await query(
-            'UPDATE users SET played = "1", balance = balance - 3 WHERE username = ?',
+            'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ?',
             [userId]
         );
 		 jackpot= roundTo(winprice*0.9,2).toFixed(2);
@@ -264,7 +275,7 @@ app.get("/again", async (req, res) => {
     tickets = [];
     resultsbyuser = [];
 
-    await query('UPDATE users SET played = "0"');
+    await query('UPDATE users SET played = 0');
 
     log("Game reset");
     res.send("ok");
@@ -272,6 +283,9 @@ app.get("/again", async (req, res) => {
 });
 
 // ================= SERVER =================
-server.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+// ================= SERVER =================
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+    console.log("Server running on port " + PORT);
 });
