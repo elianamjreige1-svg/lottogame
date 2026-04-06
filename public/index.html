@@ -510,7 +510,7 @@ usernumbers=data.usernbs;
 		//joinedgame=true;
             nb=data.num;
 			document.getElementById("player").style.display="";			
-            document.getElementById("player").innerHTML="Player ID: "+userId+" | Your balance is "+balance+" $";
+            document.getElementById("player").innerHTML="Player: "+userId+" | Balance: "+balance+" $";
 			//alert(data.old);
 			
 			if(old==1){
@@ -726,7 +726,7 @@ let msg;
     subBtn.innerText="Ticket Submitted";
 	balance=balance-3;
 	balance=roundTo(balance,2).toFixed(2);
-	document.getElementById("player").innerHTML="Player ID: "+userId+" | Your balance is "+balance+" $";
+	document.getElementById("player").innerHTML="Player: "+userId+" | Balance: "+balance+" $";
 	//document.getElementById("results").style.display="none";
 	//document.getElementById("draw").style.display="none";
 }
