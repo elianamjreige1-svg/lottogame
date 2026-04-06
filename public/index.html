@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Multiplayer Lotto</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* Body */
+body{
+    font-family:Arial, sans-serif;
+    text-align:center;
+    margin:0;
+    padding:20px;
+    background:#1e3c72;
+    color:white;
+}
+
+/* Titles */
+h2, h3, h1{
+    margin:5px;
+}
+
+/* Inputs */
+input{
+    padding:10px;
+    border-radius:5px;
+    border:none;
+    margin:5px;
+    font-size:16px;
+}
+
+/* Buttons */
+button{
+    padding:12px 18px;
+    margin:8px;
+    border:none;
+    border-radius:6px;
+    background:#ff9800;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    font-size:16px;
+}
+
+button:hover{
+    background:#ff9800;
+  
+}
+
+button:disabled{
+    background:gray;
+    cursor:not-allowed;
+}
+
+/* GRID ALWAYS 4x4 */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    justify-content:center;
+    margin:25px auto;
+    max-width:420px;
+}
+
+/* Cells */
+.cell{
+    border-radius:10px;
+    padding:18px;
+    cursor:pointer;
+    background:white;
+    color:black;
+    font-weight:bold;
+    box-shadow:0 3px 8px rgba(0,0,0,0.3);
+    transition:0.2s;
+    font-size:18px;
+}
+
+.cell:hover{
+    transform:scale(1.1);
+}
+
+.selected{
+    background:#4CAF50;
+    color:white;
+}
+
+/* Status */
+#status{
+    font-size:18px;
+    margin-top:10px;
+}
+
+#results{
+    overflow-x:auto;
+}
+
+#results h4{
+    font-size: clamp(14px, 3vw, 18px);
+    white-space: nowrap;
+}
+
+
+/* Draw section */
+#draw{
+    display:none;
+    margin:auto;
+    margin-top:20px;
+}
+
+/* Results panel */
+#results{
+    display:none;
+    background:white;
+    color:black;
+    width:70%;
+    margin:auto;
+    padding:20px;
+    border-radius:10px;
+    margin-top:25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Lotto balls */
+.balls{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.ball{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    color:white;
+    font-weight:bold;
+    font-size:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 5px 10px rgba(0,0,0,0.4);
+    animation:pop 0.5s ease;
+}
+
+/* Ball colors */
+.ball:nth-child(1){ background:#f44336; }
+.ball:nth-child(2){ background:#e91e63; }
+.ball:nth-child(3){ background:#9c27b0; }
+.ball:nth-child(4){ background:#3f51b5; }
+.ball:nth-child(5){ background:#03a9f4; }
+.ball:nth-child(6){ background:#009688; }
+.ball:nth-child(7){ background:#4caf50; }
+.ball:nth-child(8){ background:#ff9800; }
+.ball:nth-child(9){ background:#795548; }
+.ball:nth-child(10){ background:#607d8b; }
+.ball:nth-child(11){ background:#ff5722; }
+.ball:nth-child(12){ background:#673ab7; }
+.ball:nth-child(13){ background:#00bcd4; }
+.ball:nth-child(14){ background:#8bc34a; }
+.ball:nth-child(15){ background:#ffc107; }
+.ball:nth-child(16){ background:#ffeb3b; color:black; }
+
+@keyframes pop{
+    0%{transform:scale(0)}
+    80%{transform:scale(1.2)}
+    100%{transform:scale(1)}
+}
+
+/* MOBILE VERSION */
+@media(max-width:600px){
+
+body{
+    padding:10px;
+}
+
+input{
+    width:90%;
+    font-size:18px;
+}
+
+button{
+    width:90%;
+    font-size:18px;
+}
+
+.grid{
+    max-width:320px;
+    gap:10px;
+}
+
+.cell{
+    padding:14px;
+    font-size:16px;
+}
+
+.ball{
+    width:42px;
+    height:42px;
+    font-size:16px;
+}
+
+#results{
+    width:95%;
+    padding:12px;
+}
+
+}
+
+
+</style>
+</head>
+
+<body>
+
+
+
+<h2>🎰 Multiplayer Lotto</h2>
+
+<div align="center">
+Username:
+<input id="username">
+Password:
+<input id="pass" type="password">
+<button id="join" onclick="register()">Join Game</button>
+</div>
+
+<h3 id="player"></h3>
+<h2 id="greeting" align="center" style="color:#ff9800"></h2>
+<div class="grid" id="grid" style="display:none"></div>
+
+<button id="sub" onclick="buyTicket()" style="display:none">Submit Ticket</button>
+<h3 id="hint" align="center" style="color:#c0392b"></h3>
+<!--
+<a href="/chat" target="_blank">
+<button id="joinchat">Join Chat Room</button>
+</a> 
+-->
+
+<h3 id="status"></h3>
+
+<div id="draw"></div>
+<div id="results"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+//let logout=false;
+//let joinedgame=false;
+let soundUnlocked = false;
+
+document.addEventListener("click", () => {
+    soundUnlocked = true;
+});
+
+
+
+document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible"){
+        // هنا المستخدم رجع للصفحة من الخلفية
+		localStorage.setItem("username", document.getElementById("username").value);
+        localStorage.setItem("password", document.getElementById("pass").value);
+        location.reload(); // ➤ هاي تعمل refresh للصفحة
+    }
+});
+
+window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+	localStorage.setItem("username", document.getElementById("username").value);
+        localStorage.setItem("password", document.getElementById("pass").value);
+        // الصفحة رجعت من cache (Safari behavior)
+        location.reload();
+    }
+});/*
+let isJoined = false;
+function handlebutton(){
+if(document.getElementById("username").value=="" || document.getElementById("pass").value=="")
+return;
+const btn = document.getElementById("join");
+   isJoined = localStorage.getItem("joined") === "true";
+
+  if (!isJoined) {
+    register();
+    //btn.innerText = "Logout";
+    localStorage.setItem("joined", "true");
+  } else {
+  
+    logout();
+    btn.innerText = "Join Game";
+    localStorage.setItem("joined", "false");
+  }
+}
+*/
+//let log=false;
+let old=0;
+/*
+function logout(){
+playClick();
+// Remove username and allow navigation
+//logout=true;
+if(confirm("Are you sure you want to Logout?")){
+//playClick();
+//location.reload();
+log=true;
+         localStorage.removeItem("username");
+        localStorage.removeItem("password");
+        localStorage.removeItem("autoLogin");
+		document.getElementById("username").disabled=false;
+		document.getElementById("pass").disabled=false;
+		//document.getElementById("username").value="";
+		//document.getElementById("pass").value="";
+		document.getElementById("sub").disabled=true;
+		document.getElementById("player").innerHTML="";
+		document.getElementById("grid").style.display="none";
+		document.getElementById("sub").style.display="none";
+		document.getElementById("greeting").innerHTML="";
+		document.getElementById("hint").innerHTML="";
+		//played=1;
+		userId=null;
+		canplay=false;
+		old=0;
+		document.getElementById("join").style.display="";
+			document.getElementById("logout").style.display="none";
+		document.getElementById("grid").disabled=true;
+		document.getElementById("draw").innerHTML="";
+		document.getElementById("status").innerHTML="";
+		document.getElementById("results").innerHTML="";
+		document.getElementById("status").style.display="none";
+		document.getElementById("draw").style.display="none";
+    document.getElementById("results").style.display="none";
+	//empty the selected cells
+	/*
+ const cells = document.querySelectorAll(".cell");
+
+    cells.forEach(cell => {
+        cell.classList.remove("selected");
+    });
+	*/
+	//}
+//}*/
+const socket = io();
+
+let selected = [];
+let userId = null;
+let grid = document.getElementById("grid");
+const sub=document.getElementById("sub");
+
+sub.disabled=true;
+let nb=0;
+let endgame=false;
+let balance=0;
+let played=0;
+let username, passwd;
+
+let usernumbers=[];
+//let usernbs=[];
+/* Register player */
+/* Register player */
+let canplay=false;
+/*
+const sounds = [
+    new Audio("join.wav"),
+    new Audio("join.wav"),
+    new Audio("join.wav")
+];*/
+
+//let index = 0;
+
+/*
+function playClick() {
+    sounds[index].currentTime = 0;
+    sounds[index].play();
+
+    index = (index + 1) % sounds.length;
+}*/
+const coins=new Audio("coins.mp3");
+const sounds=new Audio("join.wav");
+function playcoins() {
+
+    coins.currentTime = 0;
+    coins.play();
+}
+function playClick() {
+
+    sounds.currentTime = 0;
+    sounds.play();
+}
+const sound = new Audio("results.mp3");
+const sd = new Audio("ballsgen.mp3");
+
+sd.preload = "auto";
+
+let loopInitialized = false;
+
+function initLoop(){
+    if(loopInitialized) return;
+
+    loopInitialized = true;
+
+    sd.addEventListener("timeupdate", () => {
+        if (sd.currentTime >= 1.35) {
+            sd.currentTime = 0;
+        }
+    });
+}
+
+function playresult2() {
+    if (!soundUnlocked) return;
+
+    initLoop();
+    sd.currentTime = 0;
+    sd.play().catch(()=>{});
+}
+
+function stopResult2(){
+    sd.pause();
+    sd.currentTime = 0;
+}
+
+function playresult() {
+    return new Promise((resolve) => {
+
+        if (!soundUnlocked) {
+            resolve();
+            return;
+        }
+
+        stopResult2(); // ✅ وقف الصوت الأول
+
+        sound.currentTime = 0;
+
+        sound.onended = () => resolve();
+
+        sound.play().catch(() => resolve());
+    });
+}
+//const sound3=new Audio("results.mp3");
+/*
+function playresult2() {
+    if (!soundUnlocked) return;
+
+
+//const sound = new Audio("sound.mp3");
+
+sd.addEventListener("timeupdate", () => {
+    if (sd.currentTime >= 1.3) { 
+        sd.currentTime = 0;
+    }
+});
+
+	sd.play();
+}
+*/
+//let index2 = 0;
+const sounds2 =  new Audio("check.wav");
+function playCheck() {
+
+    sounds2.currentTime = 0;
+    sounds2.play();
+
+   // index2 = (index2 + 1) % sounds2.length;
+}
+const annsound=new Audio("ancmt.mp3");
+function playannnouce(){
+annsound.currentTime=0;
+annsound.play();
+}
+function register(){
+soundUnlocked=true;
+playClick();
+    let username=document.getElementById("username").value;
+	
+	username=username.toLowerCase().trim();
+    const passwd=document.getElementById("pass").value;
+	if(username=="" || passwd=="") return;
+	
+	
+//username=username.toLowerCase();
+	//takhzin l username wel pass
+	localStorage.setItem("username", username);
+    localStorage.setItem("password", passwd);
+   // localStorage.setItem("autoLogin", "true");
+	
+	if(canplay==true) document.getElementById("greeting").style.display="none";
+
+    fetch("/register",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({username:username, passwd:passwd})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        userId=data.userId;
+		//alert(userId);
+		const jack=data.jackpot;
+		const jackpot=roundTo(jack,2).toFixed(2);
+balance=data.balance;
+balance=roundTo(balance,2).toFixed(2);
+old=data.old;
+usernumbers=data.usernbs;
+ canplay=data.canplay;
+ //alert(jackpot);
+        if(userId!=null){
+		//if(document.getElementById("sub").innerText=="Ticket Submitted")
+		document.getElementById("sub").innerText="Submit Ticket";
+		
+		//joinedgame=true;
+            nb=data.num;
+			document.getElementById("player").style.display="";			
+            document.getElementById("player").innerHTML="Player ID: "+userId+" | Your balance is "+balance+" $";
+			//alert(data.old);
+			
+			if(old==1){
+			sub.disabled=true;
+			selectUserNumbers(usernumbers);
+			//grid.disabled=true;
+			}
+			else
+            sub.disabled=false;	
+			if(canplay==false) {
+			document.getElementById("grid").style.display="none";
+			document.getElementById("sub").style.display="none";
+			document.getElementById("greeting").style.display="";
+	document.getElementById("greeting").innerHTML="<br><br>⏳Welcome to Multiplayer Lotto Game. The game has not started yet. You will be informed when the game starts...⏳";
+	document.getElementById("draw").style.display="none";
+	document.getElementById("join").innerText="Play Now";
+	document.getElementById("grid").style.display="none";
+	document.getElementById("results").style.display="none";
+	//document.getElementById("player").style.display="none";
+	document.getElementById("hint").style.display="none";
+	}
+		else{
+		
+		document.getElementById("grid").style.display="";
+			document.getElementById("sub").style.display="";
+			document.getElementById("hint").style.display="";
+		document.getElementById("hint").innerHTML="⚠️ If you cannot check numbers,<br>Reload 🔄 page , then retry";
+		
+		document.getElementById("draw").style.display="block";
+document.getElementById("draw").innerHTML ="<h2 style='color:white;'>💰 Lotto Jackpot = "+jackpot+" $</h2>";
+   
+		
+		//playresult();
+		}	
+		
+		//document.getElementById("logout").style.display="";	
+            document.getElementById("join").style.display="none";
+            document.getElementById("username").disabled=true;
+            document.getElementById("pass").disabled=true;
+				//if(balance<3) sub.disabled=true;
+        }// end if userid not null
+		
+	
+			
+		 
+		else // userid null so does not exist
+		//if(document.getElementById("username").value.trim()!="" && document.getElementById("pass").value.trim()!="")
+		{
+		//if(userId==null){
+		//isJoined=false;
+		document.getElementById("join").innerText="Join Game";
+		//btn.innerText = "Join Game";
+		alert("Wrong username or password!");
+		 //document.getElementById("username").value="";
+           // document.getElementById("pass").value="";
+			//}
+		}
+ 
+	  });
+	//alert(usernumbers);
+}
+
+
+
+/* Create grid */
+for(let i=1;i<=16;i++){
+
+    const div=document.createElement("div");
+
+    div.className="cell";
+    div.innerText=i;
+/*
+// ✅ إذا في usernbs → لون الخلايا
+    if (usernumbers != null && usernbs.includes(i)) {
+        div.classList.add("selected");
+    }*/
+
+
+    div.onclick=function(){
+	//alert(canplay);
+	if(userId==null) return;
+	/*if(canplay==0){
+	alert("Not now! Please Logout, and try later...");
+	return;}*/
+	if(sub.disabled==true) return;
+	//play sound on check or uncheck
+	if(sub.disabled==false)
+	playCheck();
+	if(balance<3 && document.getElementById("sub").disabled==false) {alert("You don't have enough money to play !!! Please recharge, then Reload 🔄 the page to Join Game");
+	//sub.disabled=false;
+	return;}
+	if(played==1 || sub.disabled==true) {return;}
+	if(old==1){
+	sub.disabled=true;
+	return;}
+	if(canplay==false) return;
+	
+	
+	//if(usernbs!=null) return;
+		
+        if(endgame==false){
+
+            if(div.classList.contains("selected")){
+                div.classList.remove("selected");
+                selected=selected.filter(n=>n!=i);
+            }
+
+            else{
+                if(selected.length<nb){
+                    div.classList.add("selected");
+                    selected.push(i);
+                }
+            }
+
+        }
+
+    };
+
+    grid.appendChild(div);
+	
+
+}
+socket.on("updatedjackpot",(data)=>{
+playcoins();
+const jack=data.jackpot;
+const jackpot=roundTo(jack,2).toFixed(2);
+//if(document.getElementById("draw").style.display!="none")
+document.getElementById("draw").innerHTML ="<h2 style='color:white;'>💰 Lotto Jackpot = "+jackpot+" $</h2>";
+   
+});
+
+function selectUserNumbers(usernumbers){
+
+    const cells = document.querySelectorAll(".cell");
+
+    cells.forEach(cell => {
+        const value = Number(cell.innerText);
+
+        if(usernumbers.includes(value)){
+            cell.classList.add("selected");
+        } else {
+            cell.classList.remove("selected"); // optional (reset)
+        }
+    });
+
+}
+/*
+socket.on("gameclosed",(data)=>{
+const m=data.msgclose;
+if(m=="game closed")
+{
+canplay=false;
+document.getElementById("grid").style.display="none";
+document.getElementById("results").style.display="none";
+document.getElementById("draw").style.display="none";
+document.getElementById("sub").style.display="none";
+document.getElementById("hint").style.display="none";
+
+}
+});*/
+
+socket.on("announce",(data)=>{
+const ann=data.ancmtmsg;
+//if(ann=="done" && joinedgame==true){
+if(ann=="done"){
+playannnouce();
+document.getElementById("greeting").style.display="";
+document.getElementById("greeting").innerHTML="<br><br><span align ='center' style='color:white'>📢 The Game is now open.<br>You can Play Now, check your 3 numbers, and submit your ticket for 3$ 📢";
+canplay=true;
+document.getElementById("join").style.display="";
+document.getElementById("player").style.display="none";
+document.getElementById("grid").style.display="none";
+
+document.getElementById("results").style.display="none";
+document.getElementById("draw").style.display="none";
+document.getElementById("sub").style.display="none";
+document.getElementById("hint").style.display="none";
+}
+});
+
+/* Submit ticket */
+function buyTicket(){
+playClick();
+    if(selected.length!=nb){
+        alert("Check exactly "+nb+" numbers");
+        return;
+    }
+	if(balance<3){
+	alert("You don't have enough money!!! Please recharge, then try again")
+	return;
+	}
+	if(confirm("Are you sure you want to submit your Ticket? After submission, the Submit Ticket button must be disabled, if not, try again")){
+	
+//log=false;
+   
+let msg;
+    fetch("/ticket",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({userId:userId,numbers:selected})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+	 msg=data.message;
+	 const jack=data.jackpot;
+	 const jackpot=roundTo(jack,2).toFixed(2);
+	// alert(jackpot);
+	 if(msg=="Ticket submitted"){
+	  endgame=true;
+//document.getElementById("logout").disabled=true;
+    const subBtn=document.getElementById("sub");
+    subBtn.disabled=true;
+    subBtn.innerText="Ticket Submitted";
+	balance=balance-3;
+	balance=roundTo(balance,2).toFixed(2);
+	document.getElementById("player").innerHTML="Player ID: "+userId+" | Your balance is "+balance+" $";
+	//document.getElementById("results").style.display="none";
+	//document.getElementById("draw").style.display="none";
+}
+
+document.getElementById("draw").style.display="block";
+document.getElementById("draw").innerHTML ="<h2 style='color:white;'>💰 Lotto Jackpot = "+jackpot+" $</h2>";
+       
+	   // document.getElementById("status").innerHTML=data.message;
+    });
+	 }
+}
+function roundTo(num, precision) {
+  const factor = Math.pow(10, precision);
+  return Math.round(num * factor) / factor;
+}
+
+
+/* Receive results */
+
+socket.on("result", async (data) => {
+document.getElementById("sub").disabled=true;
+/*
+    if(log==true) {
+        document.getElementById("draw").style.display="none";
+        document.getElementById("results").style.display="none";
+        document.getElementById("sub").disabled=true;
+
+        const cells = document.querySelectorAll(".cell");
+        selected=[];
+        cells.forEach(cell => {
+            cell.classList.remove("selected");
+        });
+        return;
+    }*/
+	if(document.getElementById("sub").innerText=="Ticket Submitted" && document.getElementById("greeting").style.display=="none"){
+
+playresult2();
+    	document.getElementById("draw").style.display="block";
+	 //document.getElementById("results").style.display="";
+	// document.getElementById("draw").innerHTML="";
+	// document.getElementById("results").innerHTML="";
+    document.getElementById("sub").disabled=true;
+
+    let numbers = data.draw.split(" ");
+    let pointa = data.pointamount;
+
+    canplay=false;
+	
+    let html = `
+    <h2 style="color:white;">💰 Lotto Jackpot = ${data.winp} $</h2>
+    <br><h2 style="color:#ff9800">🎰 Generating Winning Numbers </h2>
+    <div class='balls' id='ballsContainer'></div>
+    `;
+	
+    document.getElementById("draw").innerHTML = html;
+    	
+    document.getElementById("draw").scrollIntoView({
+        behavior:"smooth"
+    });
+
+    let container = document.getElementById("ballsContainer");
+
+    let i = 0;
+
+    let interval = setInterval(async () => {
+
+        try {
+
+
+            if(i >= numbers.length){
+                clearInterval(interval);
+
+                // ✅ وقف صوت الكرات
+                stopResult2();
+
+                let resultHTML = `
+                <h2 align='center' style="color:#ff9800">💰 Lotto Point (LP) = ${data.pointamount} $</h2><br>
+
+                <h2 align='center'>Win Policy</h2>
+                <h3 align='center'>
+                <span style='color:gray'>0 match = 0 LP</span> | 
+                <span style='color:#c0392b'>1 match = 1 LP</span><br>
+                <span style='color:#2a5298'>2 matches = 8 LP</span> | 
+                <span style='color:#4CAF50'>3 matches = 200 LP</span>
+                </h3>
+
+                <br><h2>Results</h2>
+                `;
+
+                data.results.forEach(r => {
+
+                    let bgColor="gray";
+
+                    if(r.matches==1) bgColor="#c0392b";
+                    else if(r.matches==8) bgColor="#2a5298";
+                    else if(r.matches==200) bgColor="#4CAF50";
+
+                    resultHTML += "<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "
+                    +r.userId+" | Grid: ["
+                    +r.numbers+"] | Win: "
+                    +roundTo(r.matches*pointa,2).toFixed(2)+" $</h4>";
+
+                });
+				document.getElementById("results").style.display="block";
+                document.getElementById("results").innerHTML = resultHTML;
+				document.getElementById("join").style.display="";
+				document.getElementById("join").innerText="Play Again";
+                document.getElementById("results").scrollIntoView({
+                    behavior:"smooth"
+                });
+
+                // ✅ صوت النتيجة النهائي
+                await playresult();
+
+                return;
+            }
+
+            let ball = document.createElement("div");
+            ball.className = "ball";
+            ball.innerText = numbers[i];
+            container.appendChild(ball);
+ document.getElementById("draw").scrollIntoView({
+        behavior:"smooth"
+    });
+            i++;
+
+        } catch (err) {
+            console.error("ERROR IN INTERVAL:", err);
+            clearInterval(interval);
+            stopResult2();
+        }
+
+    }, 3000);
+}//end if joined game
+//joinedgame=false;
+endgame=false;
+selected=[];
+document.getElementById("sub").disabled=true;
+});
+
+
+/*
+
+
+*/
+
+// --- Confirmation before leaving chat ---
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
+});
+
+// Add a fake history entry so the Back button triggers popstate
+history.pushState({chat:true}, "", location.href);
+
+let backConfirmActive = false;
+
+window.addEventListener("popstate", function (e) {
+    if (backConfirmActive) return; // prevent double confirm
+
+    backConfirmActive = true;
+
+    const leave = confirm("Are you sure you want to exit the chat?");
+    if (leave) {
+        // Remove username and allow navigation
+         localStorage.removeItem("username");
+        localStorage.removeItem("password");
+        localStorage.removeItem("autoLogin");
+        backConfirmActive = false;
+        // Go back one step in history
+        history.go(-1); // jump over the fake state
+		//window.close();
+    } else {
+        // User canceled, re-add fake state
+       // history.pushState({chat:true}, "", location.href);
+        backConfirmActive = false;
+    }
+});
+
+
+window.addEventListener("load", () => {
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+    const autoLogin = localStorage.getItem("autoLogin");
+
+const btn = document.getElementById("join");
+  let isJoined = localStorage.getItem("joined") === "true";
+
+  if (isJoined) {
+    btn.innerText = "Logout";
+  } else {
+    btn.innerText = "Join Game";
+  }
+
+    if(username){
+        document.getElementById("username").value = username;
+    }
+
+    if(password){
+        document.getElementById("pass").value = password;
+    }
+
+    // ✅ auto join
+    if(username && password && autoLogin === "true"){
+        register();
+    }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Multiplayer Lotto</title>
+
+<style>
+
+/* Body */
+body{
+    font-family:Arial, sans-serif;
+    text-align:center;
+    margin:0;
+    padding:20px;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    color:white;
+}
+
+/* Titles */
+h2, h3, h1{
+    margin:5px;
+}
+
+/* Inputs */
+input{
+    padding:8px;
+    border-radius:5px;
+    border:none;
+    margin:5px;
+}
+
+/* Buttons */
+button{
+    padding:10px 18px;
+    margin:8px;
+    border:none;
+    border-radius:6px;
+    background:#ff9800;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    background:#ffb74d;
+    transform:scale(1.05);
+}
+
+button:disabled{
+    background:gray;
+    cursor:not-allowed;
+}
+
+/* Lotto Grid */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,70px);
+    gap:12px;
+    justify-content:center;
+    margin:25px;
+}
+
+.cell{
+    border-radius:10px;
+    padding:18px;
+    cursor:pointer;
+    background:white;
+    color:black;
+    font-weight:bold;
+    box-shadow:0 3px 8px rgba(0,0,0,0.3);
+    transition:0.2s;
+}
+
+.cell:hover{
+    transform:scale(1.1);
+}
+
+.selected{
+    background:#4CAF50;
+    color:white;
+}
+
+/* Status */
+#status{
+    font-size:18px;
+    margin-top:10px;
+}
+
+/* Draw section hidden initially */
+#draw{
+    display:none;
+    margin:auto;
+    margin-top:20px;
+}
+
+/* Results panel hidden initially */
+#results{
+    display:none;
+    background:white;
+    color:black;
+    width:70%;
+    margin:auto;
+    padding:20px;
+    border-radius:10px;
+    margin-top:25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Lotto balls */
+.balls{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:15px;
+}
+
+.ball{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    color:white;
+    font-weight:bold;
+    font-size:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 5px 10px rgba(0,0,0,0.4);
+    animation:pop 0.5s ease;
+}
+
+/* Ball colors */
+.ball:nth-child(1){ background:#f44336; }
+.ball:nth-child(2){ background:#e91e63; }
+.ball:nth-child(3){ background:#9c27b0; }
+.ball:nth-child(4){ background:#3f51b5; }
+.ball:nth-child(5){ background:#03a9f4; }
+.ball:nth-child(6){ background:#009688; }
+.ball:nth-child(7){ background:#4caf50; }
+.ball:nth-child(8){ background:#ff9800; }
+.ball:nth-child(9){ background:#795548; }
+.ball:nth-child(10){ background:#607d8b; }
+.ball:nth-child(11){ background:#ff5722; }
+.ball:nth-child(12){ background:#673ab7; }
+.ball:nth-child(13){ background:#00bcd4; }
+.ball:nth-child(14){ background:#8bc34a; }
+.ball:nth-child(15){ background:#ffc107; }
+.ball:nth-child(16){ background:#ffeb3b; color:black; }
+
+@keyframes pop{
+    0%{transform:scale(0)}
+    80%{transform:scale(1.2)}
+    100%{transform:scale(1)}
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>🎰 Multiplayer Lotto</h2>
+
+<div>
+Username:
+<input id="username">
+Password:
+<input id="pass" type="password">
+<button id="join" onclick="register()">Join Game</button>
+</div>
+
+<h3 id="player"></h3>
+
+<div class="grid" id="grid"></div>
+
+<button id="sub" onclick="buyTicket()">Submit Ticket</button>
+
+<a href="/chat" target="_blank">
+<button id="joinchat">Join Chat Room</button>
+</a>
+
+<h3 id="status"></h3>
+
+<div id="draw"></div>
+<div id="results"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+const socket = io();
+
+let selected = [];
+let userId = null;
+const grid = document.getElementById("grid");
+const sub=document.getElementById("sub");
+
+sub.disabled=true;
+let nb=0;
+let endgame=false;
+
+/* Register player */
+function register(){
+    const username=document.getElementById("username").value;
+    const passwd=document.getElementById("pass").value;
+    fetch("/register",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({username:username, passwd:passwd})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        userId=data.userId;
+        if(userId!=null && userId.trim()!=""){
+            nb=data.num;
+            document.getElementById("player").innerHTML="Player ID: "+userId;
+            document.getElementById("join").disabled=true;
+			document.getElementById("username").disabled=true;
+			document.getElementById("pass").disabled=true;
+            sub.disabled=false;
+        }
+    });
+}
+
+/* Create grid */
+for(let i=1;i<=16;i++){
+    const div=document.createElement("div");
+    div.className="cell";
+    div.innerText=i;
+    div.onclick=function(){
+        if(endgame==false){
+            if(div.classList.contains("selected")){
+                div.classList.remove("selected");
+                selected=selected.filter(n=>n!=i);
+            } else {
+                if(selected.length<nb){
+                    div.classList.add("selected");
+                    selected.push(i);
+                }
+            }
+        }
+    };
+    grid.appendChild(div);
+}
+
+/* Submit ticket */
+function buyTicket(){
+    if(selected.length!=nb){
+        alert("Select exactly "+nb+" numbers");
+        return;
+    }
+    endgame=true;
+    document.getElementById("sub").disabled=true;
+    fetch("/ticket",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({userId:userId,numbers:selected})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        document.getElementById("status").innerHTML=data.message;
+    });
+}
+
+/* Receive results */
+socket.on("result",(data)=>{
+    document.getElementById("draw").style.display="block";
+    document.getElementById("results").style.display="block";
+
+    /* Lotto balls */
+    let numbers = data.draw.split(" ");
+    let ballsHTML="<h2>🎰 Lotto Generated Numbers</h2>";
+    ballsHTML+="<div class='balls'>";
+    numbers.forEach((n,i)=>{
+        ballsHTML+="<div class='ball'>"+n+"</div>";
+    });
+    ballsHTML+="</div>";
+    document.getElementById("draw").innerHTML=ballsHTML;
+
+    let html="<h3>Results:</h3>";
+data.results.forEach(r=>{
+    let bgColor = "";
+	
+    if(r.matches==1) bgColor="#ff9800";
+    else if(r.matches==2) bgColor="linear-gradient(135deg,#1e3c72,#2a5298)";
+    else if(r.matches>=3) bgColor="#4CAF50";
+	else bgColor="gray";
+    html+="<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "+r.userId+" | Numbers: "+r.numbers+" | Matches: "+r.matches+" | Win: "+r.win+"</h4>";
+});
+document.getElementById("results").innerHTML=html;
+});
+
+
+
+</script>
+
+</body>
+</html>

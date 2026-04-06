@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Multiplayer Lotto</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* Body */
+body{
+    font-family:Arial, sans-serif;
+    text-align:center;
+    margin:0;
+    padding:20px;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    color:white;
+}
+
+/* Titles */
+h2, h3, h1{
+    margin:5px;
+}
+
+/* Inputs */
+input{
+    padding:10px;
+    border-radius:5px;
+    border:none;
+    margin:5px;
+    font-size:16px;
+}
+
+/* Buttons */
+button{
+    padding:12px 18px;
+    margin:8px;
+    border:none;
+    border-radius:6px;
+    background:#ff9800;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    font-size:16px;
+}
+
+button:hover{
+    background:#ffb74d;
+    transform:scale(1.05);
+}
+
+button:disabled{
+    background:gray;
+    cursor:not-allowed;
+}
+
+/* GRID ALWAYS 4x4 */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    justify-content:center;
+    margin:25px auto;
+    max-width:420px;
+}
+
+/* Cells */
+.cell{
+    border-radius:10px;
+    padding:18px;
+    cursor:pointer;
+    background:white;
+    color:black;
+    font-weight:bold;
+    box-shadow:0 3px 8px rgba(0,0,0,0.3);
+    transition:0.2s;
+    font-size:18px;
+}
+
+.cell:hover{
+    transform:scale(1.1);
+}
+
+.selected{
+    background:#4CAF50;
+    color:white;
+}
+
+/* Status */
+#status{
+    font-size:18px;
+    margin-top:10px;
+}
+
+#results{
+    overflow-x:auto;
+}
+
+#results h4{
+    font-size: clamp(14px, 3vw, 18px);
+    white-space: nowrap;
+}
+
+
+/* Draw section */
+#draw{
+    display:none;
+    margin:auto;
+    margin-top:20px;
+}
+
+/* Results panel */
+#results{
+    display:none;
+    background:white;
+    color:black;
+    width:70%;
+    margin:auto;
+    padding:20px;
+    border-radius:10px;
+    margin-top:25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Lotto balls */
+.balls{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.ball{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    color:white;
+    font-weight:bold;
+    font-size:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 5px 10px rgba(0,0,0,0.4);
+    animation:pop 0.5s ease;
+}
+
+/* Ball colors */
+.ball:nth-child(1){ background:#f44336; }
+.ball:nth-child(2){ background:#e91e63; }
+.ball:nth-child(3){ background:#9c27b0; }
+.ball:nth-child(4){ background:#3f51b5; }
+.ball:nth-child(5){ background:#03a9f4; }
+.ball:nth-child(6){ background:#009688; }
+.ball:nth-child(7){ background:#4caf50; }
+.ball:nth-child(8){ background:#ff9800; }
+.ball:nth-child(9){ background:#795548; }
+.ball:nth-child(10){ background:#607d8b; }
+.ball:nth-child(11){ background:#ff5722; }
+.ball:nth-child(12){ background:#673ab7; }
+.ball:nth-child(13){ background:#00bcd4; }
+.ball:nth-child(14){ background:#8bc34a; }
+.ball:nth-child(15){ background:#ffc107; }
+.ball:nth-child(16){ background:#ffeb3b; color:black; }
+
+@keyframes pop{
+    0%{transform:scale(0)}
+    80%{transform:scale(1.2)}
+    100%{transform:scale(1)}
+}
+
+/* MOBILE VERSION */
+@media(max-width:600px){
+
+body{
+    padding:10px;
+}
+
+input{
+    width:90%;
+    font-size:18px;
+}
+
+button{
+    width:90%;
+    font-size:18px;
+}
+
+.grid{
+    max-width:320px;
+    gap:10px;
+}
+
+.cell{
+    padding:14px;
+    font-size:16px;
+}
+
+.ball{
+    width:42px;
+    height:42px;
+    font-size:16px;
+}
+
+#results{
+    width:95%;
+    padding:12px;
+}
+
+}
+
+history.pushState(null, null, location.href);
+
+window.onpopstate = function () {
+    let leave = confirm("Are you sure you want to exit the game?");
+    
+    if(leave){
+        history.back();
+    }else{
+        history.pushState(null, null, location.href);
+    }
+};
+
+</style>
+</head>
+
+<body>
+
+<h2>🎰 Multiplayer Lotto</h2>
+
+<div>
+Username:
+<input id="username">
+Password:
+<input id="pass" type="password">
+<button id="join" onclick="register()">Join Game</button>
+</div>
+
+<h3 id="player"></h3>
+
+<div class="grid" id="grid"></div>
+
+<button id="sub" onclick="buyTicket()">Submit Ticket</button>
+
+<a href="/chat" target="_blank">
+<button id="joinchat">Join Chat Room</button>
+</a>
+
+<h3 id="status"></h3>
+
+<div id="draw"></div>
+<div id="results"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+const socket = io();
+
+let selected = [];
+let userId = null;
+const grid = document.getElementById("grid");
+const sub=document.getElementById("sub");
+
+sub.disabled=true;
+let nb=0;
+let endgame=false;
+
+/* Register player */
+function register(){
+    const username=document.getElementById("username").value;
+    const passwd=document.getElementById("pass").value;
+
+    fetch("/register",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({username:username, passwd:passwd})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        userId=data.userId;
+
+        if(userId!=null && userId.trim()!=""){
+            nb=data.num;
+
+            document.getElementById("player").innerHTML="Player ID: "+userId;
+
+            document.getElementById("join").disabled=true;
+            document.getElementById("username").disabled=true;
+            document.getElementById("pass").disabled=true;
+
+            sub.disabled=false;
+        }
+		 
+		else if(document.getElementById("username").value.trim()!="" && document.getElementById("pass").value.trim()!="")
+		{
+		if(userId==null){
+		
+		alert("Wrong username or password!");
+		 document.getElementById("username").value="";
+            document.getElementById("pass").value="";}
+		}
+    });
+}
+
+/* Create grid */
+for(let i=1;i<=16;i++){
+
+    const div=document.createElement("div");
+
+    div.className="cell";
+    div.innerText=i;
+
+    div.onclick=function(){
+
+        if(endgame==false){
+
+            if(div.classList.contains("selected")){
+                div.classList.remove("selected");
+                selected=selected.filter(n=>n!=i);
+            }
+
+            else{
+                if(selected.length<nb){
+                    div.classList.add("selected");
+                    selected.push(i);
+                }
+            }
+
+        }
+
+    };
+
+    grid.appendChild(div);
+
+}
+
+/* Submit ticket */
+function buyTicket(){
+    if(selected.length!=nb){
+        alert("Select exactly "+nb+" numbers");
+        return;
+    }
+
+    endgame=true;
+
+    const subBtn=document.getElementById("sub");
+    subBtn.disabled=true;
+    subBtn.innerText="Ticket Submitted";
+
+    fetch("/ticket",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({userId:userId,numbers:selected})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+       // document.getElementById("status").innerHTML=data.message;
+    });
+}
+function roundTo(num, precision) {
+  const factor = Math.pow(10, precision);
+  return Math.round(num * factor) / factor;
+}
+
+/* Receive results */
+socket.on("result",(data)=>{
+
+    document.getElementById("draw").style.display="block";
+    document.getElementById("results").style.display="block";
+
+    /* Lotto balls */
+    let numbers = data.draw.split(" ");
+
+    let ballsHTML="<h2>🎰 Lotto Generated Numbers</h2>";
+
+    ballsHTML+="<div class='balls'>";
+
+    numbers.forEach((n,i)=>{
+
+        ballsHTML+="<div class='ball'>"+n+"</div>";
+
+    });
+
+    ballsHTML+="</div>";
+let pointa=data.pointamount;	
+if(data.winp !== undefined){
+        ballsHTML += `<h3 style="margin-top:15px; color:white;">💰 Total Lotto Amount: ${data.winp} $<br>💰 Lotto Point (LP) = ${data.pointamount} $</h3>`;
+    }
+    document.getElementById("draw").innerHTML=ballsHTML;
+
+    /* Results */
+
+    let html="<H2 align='center'>Win Policy:</H2><h3 align='center'><span style='color:gray'>0 match = 0 LP</span> | <span style='color:#c0392b'>1 match = 1 LP</span><br><span style='color:#2a5298'>2 matches = 8 LP</span> | <span style='color:#4CAF50'>3 matches = 200 LP</h3><br><h2>Results: </h2>";
+
+    data.results.forEach(r=>{
+
+        let bgColor="";
+
+        if(r.matches==1) bgColor="#c0392b";
+        else if(r.matches==8) bgColor="#2a5298";
+        else if(r.matches==200) bgColor="#4CAF50";
+        else if(r.matches==0) bgColor="gray";
+
+
+        html+="<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "
+        +r.userId+" | Grid: ["
+        +r.numbers+"] | Win: "
+        +roundTo(r.matches*pointa,1)+" $</h4>";
+
+    });
+
+    document.getElementById("results").innerHTML=html;
+/* AUTO SCROLL TO RESULTS */
+    document.getElementById("draw").scrollIntoView({
+        behavior:"smooth"
+    });
+});
+
+// --- Confirmation before leaving chat ---
+window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
+});
+
+// Add a fake history entry so the Back button triggers popstate
+history.pushState({chat:true}, "", location.href);
+
+let backConfirmActive = false;
+
+window.addEventListener("popstate", function (e) {
+    if (backConfirmActive) return; // prevent double confirm
+
+    backConfirmActive = true;
+
+    const leave = confirm("Are you sure you want to exit the chat?");
+    if (leave) {
+        // Remove username and allow navigation
+        sessionStorage.removeItem("username");
+        backConfirmActive = false;
+        // Go back one step in history
+        history.go(-1); // jump over the fake state
+		//window.close();
+    } else {
+        // User canceled, re-add fake state
+        history.pushState({chat:true}, "", location.href);
+        backConfirmActive = false;
+    }
+});
+
+
+</script>
+
+</body>
+</html>
