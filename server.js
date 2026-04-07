@@ -33,12 +33,26 @@ const pool = mysql.createPool({
   ssl: {
     rejectUnauthorized: false
   }
+ waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+	
 });
 pool.on('error', (err) => {
   console.error("MySQL Pool Error:", err);
 });
 
 const query = util.promisify(pool.query).bind(pool);
+
+// ✅ Keep-alive (هون المكان الصحيح)
+setInterval(async () => {
+  try {
+    await query("SELECT 1");
+    console.log("Keep-alive ping");
+  } catch (err) {
+    console.error("Keep-alive failed:", err);
+  }
+}, 30000);
 
 // ================= LOG =================
 function log(msg) {
