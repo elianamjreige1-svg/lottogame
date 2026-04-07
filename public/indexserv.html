@@ -128,6 +128,7 @@ section {
 <h2>
 Users 
 <input id="searchUser" placeholder="Search username..." onkeyup="filterUsers()">
+    <button id="refresh" onclick="refresh()">Refresh</button>
 </h2>
 
 <div class="table-container">
@@ -155,7 +156,10 @@ socket.on("result", (data) => {
 });
 
 let allUsers = [];
-
+    
+function refresh(){
+loadUsers();
+}
 function renderUsers(data) {
     let html = "<tr><th>Username</th><th>Balance</th><th>Actions</th></tr>";
 
