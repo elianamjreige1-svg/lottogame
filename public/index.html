@@ -497,10 +497,7 @@ playClick();
     })
     .then(res=>res.json())
     .then(data=>{
-		if (data.redirect) {
-    window.location.replace(data.redirect);
-    return;
-}
+		
         userId=data.userId;
 		//alert(userId);
 		const jack=data.jackpot;
