@@ -518,6 +518,19 @@ function playannnouce(){
 annsound.currentTime=0;
 annsound.play();
 }
+
+//remove the selection of grid
+	function removecellsselection(){
+ const cells = document.querySelectorAll(".cell");
+
+    cells.forEach(cell => {
+        const value = Number(cell.innerText);
+
+            cell.classList.remove("selected"); // optional (reset)
+        
+    });
+}
+	
 function register(){
 soundUnlocked=true;
 playClick();
@@ -533,7 +546,7 @@ playClick();
 	localStorage.setItem("username", username);
     localStorage.setItem("password", passwd);
    // localStorage.setItem("autoLogin", "true");
-	
+		if(selected.length==0) removecellsselection();
 	if(canplay==true) document.getElementById("greeting").style.display="none";
 
     fetch("/register",{
@@ -685,6 +698,7 @@ for(let i=1;i<=16;i++){
 
 }
 socket.on("updatedjackpot",(data)=>{
+if(document.getElementById("greeting").style.display!="none")
 playcoins();
 const jack=data.jackpot;
 const jackpot=roundTo(jack,2).toFixed(2);
