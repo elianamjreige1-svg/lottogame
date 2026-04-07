@@ -263,7 +263,7 @@ document.addEventListener("visibilitychange", () => {
         // هنا المستخدم رجع للصفحة من الخلفية
 		localStorage.setItem("username", document.getElementById("username").value);
         localStorage.setItem("password", document.getElementById("pass").value);
-        location.reload(); // ➤ هاي تعمل refresh للصفحة
+       // location.reload(); // ➤ هاي تعمل refresh للصفحة
     }
 });
 
@@ -272,7 +272,7 @@ window.addEventListener("pageshow", (event) => {
 	localStorage.setItem("username", document.getElementById("username").value);
         localStorage.setItem("password", document.getElementById("pass").value);
         // الصفحة رجعت من cache (Safari behavior)
-        location.reload();
+       // location.reload();
     }
 });/*
 let isJoined = false;
@@ -393,6 +393,52 @@ function playClick() {
     sounds.play();
 }
 const sound = new Audio("results.mp3");
+	
+let audioCtx;
+let buffer;
+let source;
+
+const LOOP_END = 1.35;
+
+// 🔓 unlock + تحميل الصوت
+document.addEventListener("click", async () => {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const response = await fetch("ballsgen.mp3");
+        const arrayBuffer = await response.arrayBuffer();
+        buffer = await audioCtx.decodeAudioData(arrayBuffer);
+    }
+
+    if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+    }
+}, { once: true });
+
+function playresult2() {
+    if (!soundUnlocked || !audioCtx || !buffer) return;
+
+    stopResult2(); // مهم
+
+    source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    source.loop = true;
+    source.loopStart = 0;
+    source.loopEnd = LOOP_END;
+
+    source.connect(audioCtx.destination);
+    source.start(0);
+}
+
+function stopResult2(){
+    if (source) {
+        try { source.stop(); } catch(e){}
+        source.disconnect();
+        source = null;
+    }
+}
+/*	
 const sd = new Audio("ballsgen.mp3");
 
 sd.preload = "auto";
@@ -423,7 +469,7 @@ function stopResult2(){
     sd.pause();
     sd.currentTime = 0;
 }
-
+*/
 function playresult() {
     return new Promise((resolve) => {
 
