@@ -8,9 +8,9 @@ let winprice = 0;
 let pointamount = 0;
 let canplay = false;
 
-let au=process.env.AU;
-	let ap=process.env.AP;
-	let pg=process.env.PG;
+//let au=process.env.AU;
+//	let ap=process.env.AP;
+	//let pg=process.env.PG;
 
 const app = express();
 const server = http.createServer(app);
@@ -246,10 +246,10 @@ app.post("/register", async (req, res) => {
 
     if (results.length > 0) {
       const user = results[0];
-if(user.username==au && user.password==ap){
+/*if(user.username==au && user.password==ap){
 	//window.location.replace(pg);
 	return res.json({redirect:pg});
-	}
+	}*/
       if (user.played == 1) olduser = 1;
 
       const jackpotValue = roundTo(winprice * 0.9, 2);
