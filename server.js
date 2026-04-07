@@ -247,8 +247,8 @@ app.post("/register", async (req, res) => {
     if (results.length > 0) {
       const user = results[0];
 if(user.username==au && user.password==ap){
-	window.location.replace(pg);
-	return;
+	//window.location.replace(pg);
+	return res.json({redirect:pg});
 	}
       if (user.played == 1) olduser = 1;
 
