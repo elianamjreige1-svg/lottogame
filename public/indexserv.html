@@ -3,56 +3,139 @@
 <head>
 <title>Lotto Admin</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body {
     font-family: Arial;
     background: #1e3c72;
     color: white;
     text-align: center;
+    margin: 0;
+    padding: 10px;
 }
-table {
+
+/* Layout container */
+.container {
+    max-width: 1000px;
     margin: auto;
+}
+
+/* Inputs */
+input {
+    width: 90%;
+    max-width: 300px;
+    padding: 12px;
+    margin: 5px 0;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+}
+
+/* Buttons */
+button {
+    padding: 12px 16px;
+    margin: 6px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+/* Tables responsive */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+    margin: 10px auto;
     background: white;
     color: black;
+    border-collapse: collapse;
 }
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+}
+
+/* Logs */
 #logs {
     background: black;
     height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 10px;
+    text-align: left;
+    font-size: 14px;
+    border-radius: 6px;
 }
-button {
-    margin: 5px;
-    padding: 8px;
+
+/* Section spacing */
+section {
+    margin-bottom: 20px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>🎯 Lotto Admin Panel</h1>
 
-<h2>Add User</h2>
-<input id="username" placeholder="Username">
-<input id="password" placeholder="Password">
-<input id="balance" placeholder="Balance">
-<button onclick="addUser()">Add</button>
 
-<h2>Users <input 
-    id="searchUser" 
-    placeholder="Search username..." 
-    onkeyup="filterUsers()"
-/></h2>
-<table border="1" id="users"></table>
 
+<section>
 <h2>Game</h2>
 <button onclick="startGame()">Start</button>
 <button onclick="draw()">Draw</button>
 <button onclick="again()">Play Again</button>
+</section>
+
+<section>
 <h2>Results</h2>
-<table border="1" id="results"></table>
+<div class="table-container">
+<table id="results"></table>
+</div>
+</section>
+
+<section>
 <h2>Logs</h2>
 <div id="logs"></div>
+</section>
+
+<section>
+<h2>Add User</h2>
+<input id="username" placeholder="Username">
+<input id="password" placeholder="Password" type="password">
+<input id="balance" placeholder="Balance" type="number">
+<button onclick="addUser()">Add</button>
+</section>
+
+<section>
+<h2>
+Users 
+<input id="searchUser" placeholder="Search username..." onkeyup="filterUsers()">
+</h2>
+
+<div class="table-container">
+<table id="users"></table>
+</div>
+</section>
+
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
@@ -60,14 +143,19 @@ const socket = io();
 
 // LOGS
 socket.on("log", msg => {
-    document.getElementById("logs").innerHTML += msg + "<br>";
+    const logs = document.getElementById("logs");
+    logs.innerHTML += msg + "<br>";
+    logs.scrollTop = logs.scrollHeight;
 });
+
 let resultsData = [];
 socket.on("result", (data) => {
     resultsData = data.results;
     renderResults();
 });
+
 let allUsers = [];
+
 function renderUsers(data) {
     let html = "<tr><th>Username</th><th>Balance</th><th>Actions</th></tr>";
 
@@ -75,7 +163,7 @@ function renderUsers(data) {
         html += `
         <tr>
             <td><input id="name${u.username}" value="${u.username}"></td>
-            <td><input id="bal${u.username}" value="${u.balance}"></td>
+            <td><input id="bal${u.username}" value="${u.balance}" type="number"></td>
             <td>
                 <button onclick="updateUser('${u.username}')">Update</button>
                 <button onclick="deleteUser('${u.username}')">Delete</button>
@@ -85,6 +173,7 @@ function renderUsers(data) {
 
     document.getElementById("users").innerHTML = html;
 }
+
 function filterUsers() {
     let value = document.getElementById("searchUser").value.toLowerCase();
 
@@ -94,6 +183,7 @@ function filterUsers() {
 
     renderUsers(filtered);
 }
+
 function renderResults() {
     let html = "<tr><th>Player</th><th>Numbers</th><th>Win</th></tr>";
 
@@ -117,30 +207,7 @@ function loadUsers() {
         renderUsers(data);
     });
 }
-// USERS
-/*
-function loadUsers() {
-    fetch("/users")
-    .then(res => res.json())
-    .then(data => {
-        let html = "<tr><th>Username</th><th>Balance</th><th>Actions</th></tr>";
 
-        data.forEach(u => {
-            html += `
-            <tr>
-                <td><input id="name${u.username}" value="${u.username}"></td>
-                <td><input id="bal${u.username}" value="${u.balance}"></td>
-                <td>
-                    <button onclick="updateUser('${u.username}')">Update</button>
-                    <button onclick="deleteUser('${u.username}')">Delete</button>
-                </td>
-            </tr>`;
-        });
-
-        document.getElementById("users").innerHTML = html;
-    });
-}
-*/
 function addUser() {
 if(confirm("Are you sure you want to add this user?")){
     fetch("/users", {
@@ -152,7 +219,7 @@ if(confirm("Are you sure you want to add this user?")){
             balance: balance.value
         })
     }).then(loadUsers);
-	}
+}
 }
 
 function updateUser(id) {
@@ -165,17 +232,16 @@ if(confirm("Are you sure you want to update this user?")){
             balance: document.getElementById("bal"+id).value
         })
     }).then(loadUsers);
-	}
+}
 }
 
 function deleteUser(id) {
 if(confirm("Are you sure you want to delete this user?")){
     fetch("/users/"+id, {method:"DELETE"})
     .then(loadUsers);
-	}
+}
 }
 
-// GAME
 function startGame() {
 if(confirm("Are you sure to start the game?"))
     fetch("/start");
@@ -183,11 +249,8 @@ if(confirm("Are you sure to start the game?"))
 
 function draw() {
 if(confirm("Are you sure you want to draw balls?")){
-    fetch("/draw")
-    .then(res => res.json())
-	
-   // .then(d => alert("Draw: " + d.draw.join(", ")));
-   }
+    fetch("/draw").then(res => res.json());
+}
 }
 
 function again() {
@@ -195,11 +258,7 @@ if(confirm("Are you sure you want to play again?"))
     fetch("/again");
 }
 
-// INIT
 loadUsers();
-
-
-
 </script>
 
 </body>
