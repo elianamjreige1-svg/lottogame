@@ -328,7 +328,11 @@ socket.on("connect", () => {
 });
 
 	let soundUnlocked = false;
-
+const coins=new Audio("coins.mp3");
+const sounds=new Audio("join.wav");
+const sound = new Audio("results.mp3");
+const sounds2 =  new Audio("check.wav");
+const annsound=new Audio("ancmt.mp3");
 document.addEventListener("click", async () => {
     soundUnlocked = true;
 
@@ -425,8 +429,7 @@ function playClick() {
 
     index = (index + 1) % sounds.length;
 }*/
-const coins=new Audio("coins.mp3");
-const sounds=new Audio("join.wav");
+
 function playcoins() {
 if(!soundUnlocked) return;
     coins.currentTime = 0;
@@ -445,7 +448,7 @@ async function playClick() {
         console.log("Sound error:", e);
     }
 }
-const sound = new Audio("results.mp3");
+
 	
 let audioCtx;
 let buffer;
@@ -603,7 +606,7 @@ sd.addEventListener("timeupdate", () => {
 }
 */
 //let index2 = 0;
-const sounds2 =  new Audio("check.wav");
+
 function playCheck() {
 
     sounds2.currentTime = 0;
@@ -611,7 +614,7 @@ function playCheck() {
 
    // index2 = (index2 + 1) % sounds2.length;
 }
-const annsound=new Audio("ancmt.mp3");
+
 function playannnouce(){
 	if(!soundUnlocked) return;
 annsound.currentTime=0;
