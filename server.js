@@ -1,8 +1,8 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const mysql = require('mysql2');
-const util = require("util");
+const mysql = require('mysql2/promise');
+//const util = require("util");
 
 let winprice = 0;
 let pointamount = 0;
@@ -28,27 +28,17 @@ const pool = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
-  ssl: { rejectUnauthorized: false },
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  ssl: { rejectUnauthorized: false }
+  
 });
 
 pool.on('error', (err) => {
   console.error("MySQL Pool Error:", err);
 });
 
-const query = util.promisify(pool.query).bind(pool);
+//const query = util.promisify(pool.query).bind(pool);
 
-// keep alive
-setInterval(async () => {
-  try {
-    await query("SELECT 1");
-    console.log("Keep-alive ping");
-  } catch (err) {
-    console.error("Keep-alive failed:", err);
-  }
-}, 30000);
+const [rows] = await pool.query("SELECT 1");
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {
