@@ -327,12 +327,12 @@ socket.on("connect", () => {
     console.log("Connected / Reconnected");
 });
 
-	let soundUnlocked = false;
+/*	let soundUnlocked = false;
 const coins=new Audio("coins.mp3");
 const sounds=new Audio("join.wav");
 const sound = new Audio("results.mp3");
 const sounds2 =  new Audio("check.wav");
-const annsound=new Audio("ancmt.mp3");
+const annsound=new Audio("ancmt.mp3");*/
 	/*
 document.addEventListener("click", async () => {
     soundUnlocked = true;
@@ -764,9 +764,10 @@ for(let i=1;i<=16;i++){
 	return;}*/
 	if(sub.disabled==true) return;
 	//play sound on check or uncheck
-	if(sub.disabled==false)
+//	if(sub.disabled==false);
 	//playCheck();
-	if(balance<3 && document.getElementById("sub").disabled==false) {alert("You don't have enough money to play !!! Please recharge, then Reload 🔄 the page to Join Game");
+	if(balance<3 && document.getElementById("sub").disabled==false) {
+		alert("You don't have enough money to play !!! Please recharge, then Reload 🔄 the page to Join Game");
 	//sub.disabled=false;
 	return;}
 	if(played==1 || sub.disabled==true) {return;}
