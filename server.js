@@ -225,7 +225,7 @@ app.get("/draw", async (req, res) => {
     canplay = false;
 
     res.json({ draw });
-	io.emit("gameclosed",{msgclose:"game closed"});
+	//io.emit("gameclosed",{msgclose:"game closed"});
 });
 
 app.post("/register", async (req, res) => {
