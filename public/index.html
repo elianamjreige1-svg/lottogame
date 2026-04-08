@@ -252,9 +252,34 @@ Password:
 //let joinedgame=false;
 let soundUnlocked = false;
 
-document.addEventListener("click", () => {
+document.addEventListener("click", async () => {
     soundUnlocked = true;
-});
+
+    try {
+        // 🔓 فك الحظر عن كل الأصوات
+        coins.muted = true;
+        sounds.muted = true;
+        sound.muted = true;
+
+        await coins.play();
+        await sounds.play();
+        await sound.play();
+
+        coins.pause(); sounds.pause(); sound.pause();
+
+        coins.currentTime = 0;
+        sounds.currentTime = 0;
+        sound.currentTime = 0;
+
+        coins.muted = false;
+        sounds.muted = false;
+        sound.muted = false;
+
+    } catch(e){
+        console.log("Unlock failed:", e);
+    }
+
+}, { once: true });
 
 
 
@@ -346,7 +371,9 @@ log=true;
 	//}
 //}*/
 const socket = io();
-
+socket.on("connect", () => {
+    console.log("Connected / Reconnected");
+});
 let selected = [];
 let userId = null;
 let grid = document.getElementById("grid");
@@ -416,6 +443,26 @@ document.addEventListener("click", async () => {
     }
 }, { once: true });
 
+	async function playresult2() {
+    if (!soundUnlocked || !audioCtx || !buffer) return;
+
+    if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+    }
+
+    stopResult2();
+
+    source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    source.loop = true;
+    source.loopStart = 0;
+    source.loopEnd = LOOP_END;
+
+    source.connect(audioCtx.destination);
+    source.start(0);
+}
+/*
 function playresult2() {
     if (!soundUnlocked || !audioCtx || !buffer) return;
 
@@ -431,7 +478,7 @@ function playresult2() {
     source.connect(audioCtx.destination);
     source.start(0);
 }
-
+*/
 function stopResult2(){
     if (source) {
         try { source.stop(); } catch(e){}
@@ -471,6 +518,29 @@ function stopResult2(){
     sd.currentTime = 0;
 }
 */
+	function playresult() {
+    return new Promise((resolve) => {
+
+        if (!soundUnlocked) {
+            resolve();
+            return;
+        }
+
+        stopResult2();
+
+        sound.currentTime = 0;
+
+        sound.play()
+        .then(() => {
+            sound.onended = () => resolve();
+        })
+        .catch((err) => {
+            console.log("Play blocked:", err);
+            resolve();
+        });
+    });
+}
+	/*
 function playresult() {
     return new Promise((resolve) => {
 
@@ -488,6 +558,7 @@ function playresult() {
         sound.play().catch(() => resolve());
     });
 }
+	*/
 //const sound3=new Audio("results.mp3");
 /*
 function playresult2() {
