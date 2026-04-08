@@ -38,7 +38,7 @@ pool.on('error', (err) => {
 
 //const query = util.promisify(pool.query).bind(pool);
 
-const [rows] = await pool.query("SELECT 1");
+//const [rows] = await pool.query("SELECT 1");
 
 // ================= SOCKET =================
 io.on("connection", (socket) => {
