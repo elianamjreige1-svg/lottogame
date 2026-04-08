@@ -333,6 +333,7 @@ const sounds=new Audio("join.wav");
 const sound = new Audio("results.mp3");
 const sounds2 =  new Audio("check.wav");
 const annsound=new Audio("ancmt.mp3");
+	/*
 document.addEventListener("click", async () => {
     soundUnlocked = true;
 
@@ -375,7 +376,7 @@ document.addEventListener("click", async () => {
         console.log("Unlock failed:", e);
     }
 
-}, { once: true });
+}, { once: true });*/
 
 
 
@@ -429,7 +430,7 @@ function playClick() {
 
     index = (index + 1) % sounds.length;
 }*/
-
+/*
 function playcoins() {
 if(!soundUnlocked) return;
     coins.currentTime = 0;
@@ -448,13 +449,13 @@ async function playClick() {
         console.log("Sound error:", e);
     }
 }
-
-	
+*/
+/*	
 let audioCtx;
 let buffer;
 let source;
 
-const LOOP_END = 1.6;
+const LOOP_END = 1.6;*/
 /*
 // 🔓 unlock + تحميل الصوت
 document.addEventListener("click", async () => {
@@ -471,7 +472,7 @@ document.addEventListener("click", async () => {
         await audioCtx.resume();
     }
 }, { once: true });*/
-
+/*
 	async function playresult2() {
     if (!soundUnlocked || !audioCtx || !buffer) return;
 
@@ -490,7 +491,7 @@ document.addEventListener("click", async () => {
 
     source.connect(audioCtx.destination);
     source.start(0);
-}
+}*/
 /*
 function playresult2() {
     if (!soundUnlocked || !audioCtx || !buffer) return;
@@ -507,14 +508,14 @@ function playresult2() {
     source.connect(audioCtx.destination);
     source.start(0);
 }
-*/
+*//*
 function stopResult2(){
     if (source) {
         try { source.stop(); } catch(e){}
         source.disconnect();
         source = null;
     }
-}
+}*/
 /*	
 const sd = new Audio("ballsgen.mp3");
 
@@ -546,7 +547,7 @@ function stopResult2(){
     sd.pause();
     sd.currentTime = 0;
 }
-*/
+*//*
 	function playresult() {
     return new Promise((resolve) => {
 
@@ -568,7 +569,7 @@ function stopResult2(){
             resolve();
         });
     });
-}
+}*/
 	/*
 function playresult() {
     return new Promise((resolve) => {
@@ -606,7 +607,7 @@ sd.addEventListener("timeupdate", () => {
 }
 */
 //let index2 = 0;
-
+/*
 function playCheck() {
 
     sounds2.currentTime = 0;
@@ -619,7 +620,7 @@ function playannnouce(){
 	if(!soundUnlocked) return;
 annsound.currentTime=0;
 annsound.play();
-}
+}*/
 
 //remove the selection of grid
 	function removecellsselection(){
