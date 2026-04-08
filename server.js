@@ -64,7 +64,7 @@ function log(msg) {
 let tickets = [];
 let resultsbyuser = [];
 
-pool.query('UPDATE users SET played = 0');
+//pool.query('UPDATE users SET played = 0');
 
 // ================= HELPERS =================
 function generateNumbers() {
