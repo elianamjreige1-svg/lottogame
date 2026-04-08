@@ -1,14 +1,12 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const mysql = require('mysql2/promise');
-//const util = require("util");
+const mysql = require('mysql2');
+const util = require("util");
 
 let winprice = 0;
 let pointamount = 0;
 let canplay = false;
-
-let lastResult = null; // ✅ جديد
 
 const app = express();
 const server = http.createServer(app);
@@ -28,31 +26,15 @@ const pool = mysql.createPool({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
-  ssl: { rejectUnauthorized: false }
-  
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
-
 pool.on('error', (err) => {
   console.error("MySQL Pool Error:", err);
 });
 
-//const query = util.promisify(pool.query).bind(pool);
-
-//const [rows] = await pool.query("SELECT 1");
-
-// ================= SOCKET =================
-io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
-
-    // ✅ إذا في نتيجة سابقة ابعتيها
-    if (lastResult) {
-        socket.emit("result", lastResult);
-    }
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
-    });
-});
+const query = util.promisify(pool.query).bind(pool);
 
 // ================= LOG =================
 function log(msg) {
@@ -64,7 +46,8 @@ function log(msg) {
 let tickets = [];
 let resultsbyuser = [];
 
-//pool.query('UPDATE users SET played = 0');
+// reset played on start
+query('UPDATE users SET played = 0');
 
 // ================= HELPERS =================
 function generateNumbers() {
@@ -82,6 +65,52 @@ function roundTo(num, precision) {
   return Math.round(num * factor) / factor;
 }
 
+// ================= USERS CRUD =================
+
+// GET
+app.get("/users", async (req, res) => {
+    const users = await query("SELECT username, balance FROM users");
+    res.json(users);
+});
+
+// ADD
+app.post("/users", async (req, res) => {
+    const { username, password, balance } = req.body;
+
+    await query(
+        "INSERT INTO users (username, password, balance) VALUES (?, ?, ?)",
+        [username, password, balance]
+    );
+
+    log("User added: " + username);
+    res.send("ok");
+});
+
+// UPDATE
+app.put("/users/:username", async (req, res) => {
+    const oldUsername = req.params.username;
+    const { username, balance } = req.body;
+
+    await query(
+        "UPDATE users SET username=?, balance=? WHERE username=?",
+        [username, balance, oldUsername]
+    );
+
+    log("User updated: " + oldUsername + " -> " + username);
+    res.send("ok");
+});
+
+// DELETE
+app.delete("/users/:username", async (req, res) => {
+	
+    const username = req.params.username;
+
+    await query("DELETE FROM users WHERE username=?", [username]);
+
+    log("User deleted: " + username);
+    res.send("ok");
+});
+
 // ================= GAME =================
 
 // START
@@ -90,18 +119,14 @@ app.get("/start", async (req, res) => {
     tickets = [];
     resultsbyuser = [];
     winprice = 0;
-    lastResult = null; // ✅ reset
 
-    await pool.query('UPDATE users SET played = 0');
+    await query('UPDATE users SET played = 0');
 
     log("Game started");
-    io.emit("announce", { ancmtmsg: "done" });
-
+	io.emit("announce", { ancmtmsg: "done" });
     res.send("ok");
 });
-
-let jackpot = 0;
-
+let jackpot=0;
 app.post("/ticket", async (req, res) => {
     const { userId, numbers } = req.body;
 
@@ -110,26 +135,24 @@ app.post("/ticket", async (req, res) => {
     }
 
     try {
-        const result = await pool.query(
+        const result = await query(
             'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ?',
             [userId]
         );
-
-        jackpot = roundTo(winprice * 0.9, 2).toFixed(2);
-
+		 jackpot= roundTo(winprice*0.9,2).toFixed(2);
+        // already played
+		
         if (result.affectedRows === 0) {
-            io.emit("updatedjackpot", { jackpot });
-            return res.json({ message: "Already played", jackpot });
+			io.emit("updatedjackpot",{jackpot:jackpot});
+        return res.json({ message: "Already played",jackpot:jackpot });
+		  // res.json({ message: "Ticket submitted" });
         }
 
         tickets.push({ userId, numbers });
         winprice += 3;
-
-        jackpot = roundTo(winprice * 0.9, 2).toFixed(2);
-
-        io.emit("updatedjackpot", { jackpot });
-
-        res.json({ message: "Ticket submitted", jackpot });
+		 jackpot=roundTo(winprice*0.9,2).toFixed(2);
+        res.json({ message: "Ticket submitted",jackpot:jackpot });
+		io.emit("updatedjackpot",{jackpot:jackpot});
 
     } catch (err) {
         console.error(err);
@@ -139,79 +162,70 @@ app.post("/ticket", async (req, res) => {
 
 // DRAW
 app.get("/draw", async (req, res) => {
-    try {
-        const draw = generateNumbers();
-        let results = [];
-        let totalmatches = 0;
 
-        winprice = roundTo(winprice * 0.9, 2);
+    const draw = generateNumbers();
+    let results = [];
+    let totalmatches = 0;
 
-        tickets.forEach(ticket => {
-            const playerNumbers = ticket.numbers.map(Number);
-            let matches = playerNumbers.filter(n => draw.includes(n)).length;
+    winprice = roundTo(winprice * 0.9, 2);
 
-            let reward = 0;
-            if (matches === 1) reward = 1;
-            else if (matches === 2) reward = 8;
-            else if (matches === 3) reward = 200;
+    tickets.forEach(ticket => {
+        const playerNumbers = ticket.numbers.map(Number);
+        let matches = playerNumbers.filter(n => draw.includes(n)).length;
 
-            if (reward > 0) {
-                resultsbyuser.push(ticket.userId, reward);
-                totalmatches += reward;
-            }
+        let reward = 0;
+        if (matches === 1) reward = 1;
+        else if (matches === 2) reward = 8;
+        else if (matches === 3) reward = 200;
 
-            results.push({
-                userId: ticket.userId,
-                numbers: ticket.numbers,
-                matches: reward,
-                win: reward + " $"
-            });
+        if (reward > 0) {
+            resultsbyuser.push(ticket.userId, reward);
+            totalmatches += reward;
+        }
+
+        results.push({
+            userId: ticket.userId,
+			numbers:ticket.numbers,
+            matches:reward,
+            win:reward+" $"
         });
+    });
 
-        if (totalmatches === 0) {
-            pointamount = 0;
-        } else {
-            pointamount = roundTo(winprice / totalmatches, 2);
-        }
-
-        // update balances
-        for (let i = 0; i < resultsbyuser.length; i += 2) {
-            const username = resultsbyuser[i];
-            const value = resultsbyuser[i + 1] * pointamount;
-
-            await pool.query(
-                'UPDATE users SET balance = balance + ? WHERE username = ?',
-                [value, username]
-            );
-        }
-
-        // ✅ خزّن النتيجة
-        lastResult = {
-            draw: draw.join(" "),
-            results,
-            winp: winprice,
-            pointamount
-        };
-
-        // ✅ أرسلها
-        io.emit("result", lastResult);
-        io.emit("gameclosed", { msgclose: "game closed" });
-
-        log("Draw: " + draw.join(", "));
-        log("Total: " + winprice);
-        log("Point value: " + pointamount);
-
-        tickets = [];
-        resultsbyuser = [];
-        winprice = 0;
-        canplay = false;
-
-        res.json({ draw });
-
-    } catch (err) {
-        console.error("DRAW ERROR:", err);
-        res.status(500).send("Draw error");
+    if (totalmatches === 0) {
+        pointamount = 0;
+    } else {
+        pointamount = roundTo(winprice / totalmatches, 2);
     }
+
+    // update balances
+    for (let i = 0; i < resultsbyuser.length; i += 2) {
+        const username = resultsbyuser[i];
+        const value = resultsbyuser[i + 1] * pointamount;
+
+        await query(
+            'UPDATE users SET balance = balance + ? WHERE username = ?',
+            [value, username]
+        );
+    }
+
+    io.emit("result", {
+        draw:draw.join(" "),
+        results,
+        winp:winprice,
+        pointamount
+    });
+
+    log("Draw: " + draw.join(", "));
+    log("Total: " + winprice);
+    log("Point value: " + pointamount);
+
+    tickets = [];
+    resultsbyuser = [];
+    winprice = 0;
+    canplay = false;
+
+    res.json({ draw });
+	io.emit("gameclosed",{msgclose:"game closed"});
 });
 
 app.post("/register", async (req, res) => {
@@ -221,17 +235,14 @@ app.post("/register", async (req, res) => {
   let olduser = 0;
 
   try {
-    const results = await pool.query(
+    const results = await query(
       'SELECT * FROM users WHERE username = ? AND password = ?',
       [username, pa]
     );
 
     if (results.length > 0) {
       const user = results[0];
-/*if(user.username==au && user.password==ap){
-	//window.location.replace(pg);
-	return res.json({redirect:pg});
-	}*/
+
       if (user.played == 1) olduser = 1;
 
       const jackpotValue = roundTo(winprice * 0.9, 2);
@@ -263,16 +274,15 @@ app.get("/again", async (req, res) => {
     canplay = true;
     tickets = [];
     resultsbyuser = [];
-    lastResult = null;
 
-    await pool.query('UPDATE users SET played = 0');
+    await query('UPDATE users SET played = 0');
 
     log("Game reset");
-    io.emit("announce", { ancmtmsg: "done" });
-
     res.send("ok");
+	io.emit("announce", { ancmtmsg: "done" });
 });
 
+// ================= SERVER =================
 // ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 
