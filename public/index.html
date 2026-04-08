@@ -930,6 +930,10 @@ document.getElementById("sub").disabled=true;
         });
         return;
     }*/
+	if(document.getElementById("join").innerText=="Play Now") {
+		document.getElementById("greeting").innerHTML="<br><br>⏳Welcome to Multiplayer Lotto Game. The game has not started yet. You will be informed when the game starts...⏳";
+return;
+	}
 	if(document.getElementById("sub").innerText=="Ticket Submitted" && document.getElementById("greeting").style.display=="none"){
 
 //playresult2();
