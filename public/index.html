@@ -635,7 +635,7 @@ annsound.play();
 	
 function register(){
 //soundUnlocked=true;
-playClick();
+//playClick();
     let username=document.getElementById("username").value;
 	
 	username=username.toLowerCase().trim();
@@ -764,7 +764,7 @@ for(let i=1;i<=16;i++){
 	if(sub.disabled==true) return;
 	//play sound on check or uncheck
 	if(sub.disabled==false)
-	playCheck();
+	//playCheck();
 	if(balance<3 && document.getElementById("sub").disabled==false) {alert("You don't have enough money to play !!! Please recharge, then Reload 🔄 the page to Join Game");
 	//sub.disabled=false;
 	return;}
@@ -801,7 +801,7 @@ for(let i=1;i<=16;i++){
 }
 socket.on("updatedjackpot",(data)=>{
 if(document.getElementById("greeting").style.display=="none")
-playcoins();
+//playcoins();
 const jack=data.jackpot;
 const jackpot=roundTo(jack,2).toFixed(2);
 //if(document.getElementById("draw").style.display!="none")
@@ -843,7 +843,7 @@ socket.on("announce",(data)=>{
 const ann=data.ancmtmsg;
 //if(ann=="done" && joinedgame==true){
 if(ann=="done"){
-playannnouce();
+//playannnouce();
 document.getElementById("greeting").style.display="";
 document.getElementById("greeting").innerHTML="<br><br><span align ='center' style='color:white'>📢 The Game is now open.<br>You can Play Now, check your 3 numbers, and submit your ticket for 3$ 📢";
 canplay=true;
@@ -860,7 +860,7 @@ document.getElementById("hint").style.display="none";
 
 /* Submit ticket */
 function buyTicket(){
-playClick();
+//playClick();
     if(selected.length!=nb){
         alert("Check exactly "+nb+" numbers");
         return;
@@ -957,7 +957,7 @@ document.getElementById("sub").disabled=true;
     let container = document.getElementById("ballsContainer");
 
     let i = 0;
-playresult2();
+//playresult2();
     let interval = setInterval(async () => {
 
         try {
@@ -967,7 +967,7 @@ playresult2();
                 clearInterval(interval);
 
                 // ✅ وقف صوت الكرات
-                stopResult2();
+               // stopResult2();
 
                 let resultHTML = `
                 <h2 align='center' style="color:#ff9800">💰 Lotto Point (LP) = ${data.pointamount} $</h2><br>
@@ -1006,7 +1006,7 @@ playresult2();
                 });
 
                 // ✅ صوت النتيجة النهائي
-                await playresult();
+              //  await playresult();
 
                 return;
             }
@@ -1023,7 +1023,7 @@ playresult2();
         } catch (err) {
             console.error("ERROR IN INTERVAL:", err);
             clearInterval(interval);
-            stopResult2();
+           // stopResult2();
         }
 
     }, 3000);
