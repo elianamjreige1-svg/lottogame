@@ -224,6 +224,50 @@ app.get("/draw", async (req, res) => {
     }
 });
 
+app.post("/register", async (req, res) => {
+  const username = req.body.username.toLowerCase();
+  const pa = req.body.passwd;
+
+  let olduser = 0;
+
+  try {
+    const results = await query(
+      'SELECT * FROM users WHERE username = ? AND password = ?',
+      [username, pa]
+    );
+
+    if (results.length > 0) {
+      const user = results[0];
+/*if(user.username==au && user.password==ap){
+	//window.location.replace(pg);
+	return res.json({redirect:pg});
+	}*/
+      if (user.played == 1) olduser = 1;
+
+      const jackpotValue = roundTo(winprice * 0.9, 2);
+
+      res.json({
+        userId: username,
+        num: user.roundtype,
+        balance: roundTo(user.balance, 2).toFixed(2),
+        old: olduser,
+        jackpot: jackpotValue,
+        usernbs: tickets
+          .filter(obj => obj.userId === username)
+          .flatMap(obj => obj.numbers),
+        canplay: canplay
+      });
+
+    } else {
+      res.json({ userId: null });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("DB error");
+  }
+});
+
 // AGAIN
 app.get("/again", async (req, res) => {
     canplay = true;
