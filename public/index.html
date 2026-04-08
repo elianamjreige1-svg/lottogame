@@ -250,56 +250,8 @@ Password:
 <script>
 //let logout=false;
 //let joinedgame=false;
-let soundUnlocked = false;
 
-document.addEventListener("click", async () => {
-    soundUnlocked = true;
-
-    try {
-        // 🔓 فك الحظر عن كل الأصوات
-        coins.muted = true;
-        sounds.muted = true;
-        sound.muted = true;
-
-        await coins.play();
-        await sounds.play();
-        await sound.play();
-
-        coins.pause(); sounds.pause(); sound.pause();
-
-        coins.currentTime = 0;
-        sounds.currentTime = 0;
-        sound.currentTime = 0;
-
-        coins.muted = false;
-        sounds.muted = false;
-        sound.muted = false;
-
-    } catch(e){
-        console.log("Unlock failed:", e);
-    }
-
-}, { once: true });
-
-
-
-document.addEventListener("visibilitychange", () => {
-    if(document.visibilityState === "visible"){
-        // هنا المستخدم رجع للصفحة من الخلفية
-		localStorage.setItem("username", document.getElementById("username").value);
-        localStorage.setItem("password", document.getElementById("pass").value);
-       // location.reload(); // ➤ هاي تعمل refresh للصفحة
-    }
-});
-
-window.addEventListener("pageshow", (event) => {
-    if (event.persisted) {
-	localStorage.setItem("username", document.getElementById("username").value);
-        localStorage.setItem("password", document.getElementById("pass").value);
-        // الصفحة رجعت من cache (Safari behavior)
-       // location.reload();
-    }
-});/*
+	/*
 let isJoined = false;
 function handlebutton(){
 if(document.getElementById("username").value=="" || document.getElementById("pass").value=="")
@@ -374,6 +326,72 @@ const socket = io();
 socket.on("connect", () => {
     console.log("Connected / Reconnected");
 });
+
+	let soundUnlocked = false;
+
+document.addEventListener("click", async () => {
+    soundUnlocked = true;
+
+    try {
+        // 🔓 HTML Audio unlock
+        coins.muted = true;
+        sounds.muted = true;
+        sound.muted = true;
+
+        await coins.play();
+        await sounds.play();
+        await sound.play();
+
+        coins.pause(); 
+        sounds.pause(); 
+        sound.pause();
+
+        coins.currentTime = 0;
+        sounds.currentTime = 0;
+        sound.currentTime = 0;
+
+        coins.muted = false;
+        sounds.muted = false;
+        sound.muted = false;
+
+        // 🔓 AudioContext unlock
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            const response = await fetch("ballsgen.mp3");
+            const arrayBuffer = await response.arrayBuffer();
+            buffer = await audioCtx.decodeAudioData(arrayBuffer);
+        }
+
+        if (audioCtx.state === "suspended") {
+            await audioCtx.resume();
+        }
+
+    } catch(e){
+        console.log("Unlock failed:", e);
+    }
+
+}, { once: true });
+
+
+
+document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible"){
+        // هنا المستخدم رجع للصفحة من الخلفية
+		localStorage.setItem("username", document.getElementById("username").value);
+        localStorage.setItem("password", document.getElementById("pass").value);
+       // location.reload(); // ➤ هاي تعمل refresh للصفحة
+    }
+});
+
+window.addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+	localStorage.setItem("username", document.getElementById("username").value);
+        localStorage.setItem("password", document.getElementById("pass").value);
+        // الصفحة رجعت من cache (Safari behavior)
+       // location.reload();
+    }
+});
 let selected = [];
 let userId = null;
 let grid = document.getElementById("grid");
@@ -414,10 +432,18 @@ if(!soundUnlocked) return;
     coins.currentTime = 0;
     coins.play();
 }
-function playClick() {
-
-    sounds.currentTime = 0;
-    sounds.play();
+async function playClick() {
+    try {
+        if (!soundUnlocked) {
+            soundUnlocked = true;
+            await sounds.play(); // unlock + play بنفس الوقت
+        } else {
+            sounds.currentTime = 0;
+            await sounds.play();
+        }
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
 }
 const sound = new Audio("results.mp3");
 	
@@ -426,7 +452,7 @@ let buffer;
 let source;
 
 const LOOP_END = 1.6;
-
+/*
 // 🔓 unlock + تحميل الصوت
 document.addEventListener("click", async () => {
 	 soundUnlocked = true;
@@ -441,7 +467,7 @@ document.addEventListener("click", async () => {
     if (audioCtx.state === "suspended") {
         await audioCtx.resume();
     }
-}, { once: true });
+}, { once: true });*/
 
 	async function playresult2() {
     if (!soundUnlocked || !audioCtx || !buffer) return;
@@ -901,7 +927,7 @@ document.getElementById("sub").disabled=true;
     }*/
 	if(document.getElementById("sub").innerText=="Ticket Submitted" && document.getElementById("greeting").style.display=="none"){
 
-playresult2();
+//playresult2();
     	document.getElementById("draw").style.display="block";
 	 //document.getElementById("results").style.display="";
 	// document.getElementById("draw").innerHTML="";
@@ -928,7 +954,7 @@ playresult2();
     let container = document.getElementById("ballsContainer");
 
     let i = 0;
-
+playresult2();
     let interval = setInterval(async () => {
 
         try {
