@@ -64,7 +64,7 @@ function log(msg) {
 let tickets = [];
 let resultsbyuser = [];
 
-query('UPDATE users SET played = 0');
+pool.query('UPDATE users SET played = 0');
 
 // ================= HELPERS =================
 function generateNumbers() {
@@ -92,7 +92,7 @@ app.get("/start", async (req, res) => {
     winprice = 0;
     lastResult = null; // ✅ reset
 
-    await query('UPDATE users SET played = 0');
+    await pool.query('UPDATE users SET played = 0');
 
     log("Game started");
     io.emit("announce", { ancmtmsg: "done" });
@@ -110,7 +110,7 @@ app.post("/ticket", async (req, res) => {
     }
 
     try {
-        const result = await query(
+        const result = await pool.query(
             'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ?',
             [userId]
         );
@@ -179,7 +179,7 @@ app.get("/draw", async (req, res) => {
             const username = resultsbyuser[i];
             const value = resultsbyuser[i + 1] * pointamount;
 
-            await query(
+            await pool.query(
                 'UPDATE users SET balance = balance + ? WHERE username = ?',
                 [value, username]
             );
@@ -221,7 +221,7 @@ app.post("/register", async (req, res) => {
   let olduser = 0;
 
   try {
-    const results = await query(
+    const results = await pool.query(
       'SELECT * FROM users WHERE username = ? AND password = ?',
       [username, pa]
     );
@@ -265,7 +265,7 @@ app.get("/again", async (req, res) => {
     resultsbyuser = [];
     lastResult = null;
 
-    await query('UPDATE users SET played = 0');
+    await pool.query('UPDATE users SET played = 0');
 
     log("Game reset");
     io.emit("announce", { ancmtmsg: "done" });
