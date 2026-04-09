@@ -223,6 +223,10 @@ if(confirm("Are you sure you want to add this user?")){
             balance: balance.value
         })
     }).then(loadUsers);
+   document.getElementById("username").value="";
+    document.getElementById("password").value="";
+    document.getElementById("balance").value="";
+    
 }
 }
 
