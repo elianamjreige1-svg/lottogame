@@ -671,7 +671,7 @@ function playannnouce(){
 }
 	
 function register(){
-	joinclicked=true;
+	
 	endgame=false;
 //soundUnlocked=true;
 playClick();
@@ -709,6 +709,7 @@ usernumbers=data.usernbs;
  canplay=data.canplay;
  //alert(jackpot);
         if(userId!=null){
+			joinclicked=true;
 		//if(document.getElementById("sub").innerText=="Ticket Submitted")
 		document.getElementById("sub").innerText="Submit Ticket";
 		
@@ -884,7 +885,7 @@ socket.on("announce",(data)=>{
 const ann=data.ancmtmsg;
 	const doann=document.getElementById("greeting").dispay!="none" || document.getElementById("sub").disabled==false;
 //if(ann=="done" && joinedgame==true){
-if(ann=="done" && joinclicked && doann) && endgame==false {
+if(ann=="done" && joinclicked && doann && endgame==false) {
 playannnouce();
 document.getElementById("greeting").style.display="";
 document.getElementById("greeting").innerHTML="<br><br><span align ='center' style='color:white'>📢 The Game is now open.<br>You can Play Now, check your 3 numbers, and submit your ticket for 3$ 📢";
