@@ -465,6 +465,20 @@ function playball() {
         console.log("Sound error:", e);
     }
 }
+const preres=new Audio("preres.mp3");
+function playpreres() {
+ try {
+        if (!soundUnlocked) {
+            soundUnlocked = true;
+             preres.play(); // unlock + play بنفس الوقت
+        } else {
+            preres.currentTime = 0;
+             preres.play();
+        }
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
+}
 	
 function playcoins() {
  try {
@@ -993,7 +1007,7 @@ document.getElementById("join").style.display="none";
 
 	}
 if(endgame==true && newround==true){
-	playannnouce();
+	playpreres();
 //playresult2();
     	document.getElementById("draw").style.display="block";
 	 //document.getElementById("results").style.display="";
@@ -1080,6 +1094,7 @@ playresult();
             ball.innerText = numbers[i];
             container.appendChild(ball);
 			playball();
+			playpreres();
  document.getElementById("draw").scrollIntoView({
         behavior:"smooth"
     });
