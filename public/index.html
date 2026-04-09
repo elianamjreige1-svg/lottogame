@@ -326,13 +326,13 @@ const socket = io();
 socket.on("connect", () => {
     console.log("Connected / Reconnected");
 });
-
-/*	let soundUnlocked = false;
+//let soundUnlocked = false;
+	let soundUnlocked = false;
 const coins=new Audio("coins.mp3");
 const sounds=new Audio("join.wav");
 const sound = new Audio("results.mp3");
 const sounds2 =  new Audio("check.wav");
-const annsound=new Audio("ancmt.mp3");*/
+const annsound=new Audio("ancmt.mp3");
 	/*
 document.addEventListener("click", async () => {
     soundUnlocked = true;
@@ -430,11 +430,19 @@ function playClick() {
 
     index = (index + 1) % sounds.length;
 }*/
-/*
+
 function playcoins() {
-if(!soundUnlocked) return;
-    coins.currentTime = 0;
-    coins.play();
+ try {
+        if (!soundUnlocked) {
+            soundUnlocked = true;
+            await coins.play(); // unlock + play بنفس الوقت
+        } else {
+            coins.currentTime = 0;
+            await coins.play();
+        }
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
 }
 async function playClick() {
     try {
@@ -449,14 +457,14 @@ async function playClick() {
         console.log("Sound error:", e);
     }
 }
-*/
-/*	
+
+
 let audioCtx;
 let buffer;
 let source;
-
-const LOOP_END = 1.6;*/
 /*
+const LOOP_END = 1.6;*/
+
 // 🔓 unlock + تحميل الصوت
 document.addEventListener("click", async () => {
 	 soundUnlocked = true;
@@ -471,7 +479,7 @@ document.addEventListener("click", async () => {
     if (audioCtx.state === "suspended") {
         await audioCtx.resume();
     }
-}, { once: true });*/
+}, { once: true });
 /*
 	async function playresult2() {
     if (!soundUnlocked || !audioCtx || !buffer) return;
@@ -570,25 +578,21 @@ function stopResult2(){
         });
     });
 }*/
-	/*
+	
 function playresult() {
-    return new Promise((resolve) => {
-
+try {
         if (!soundUnlocked) {
-            resolve();
-            return;
+            soundUnlocked = true;
+            await sound.play(); // unlock + play بنفس الوقت
+        } else {
+            sound.currentTime = 0;
+            await sound.play();
         }
-
-        stopResult2(); // ✅ وقف الصوت الأول
-
-        sound.currentTime = 0;
-
-        sound.onended = () => resolve();
-
-        sound.play().catch(() => resolve());
-    });
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
 }
-	*/
+	
 //const sound3=new Audio("results.mp3");
 /*
 function playresult2() {
@@ -607,20 +611,36 @@ sd.addEventListener("timeupdate", () => {
 }
 */
 //let index2 = 0;
-/*
+
 function playCheck() {
 
-    sounds2.currentTime = 0;
-    sounds2.play();
-
+   try {
+        if (!soundUnlocked) {
+            soundUnlocked = true;
+            await sounds2.play(); // unlock + play بنفس الوقت
+        } else {
+            sounds2.currentTime = 0;
+            await sounds2.play();
+        }
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
    // index2 = (index2 + 1) % sounds2.length;
 }
 
 function playannnouce(){
-	if(!soundUnlocked) return;
-annsound.currentTime=0;
-annsound.play();
-}*/
+	try {
+        if (!soundUnlocked) {
+            soundUnlocked = true;
+            await annsound.play(); // unlock + play بنفس الوقت
+        } else {
+            annsound.currentTime = 0;
+            await annsound.play();
+        }
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
+}
 
 //remove the selection of grid
 	function removecellsselection(){
@@ -636,7 +656,7 @@ annsound.play();
 	
 function register(){
 //soundUnlocked=true;
-//playClick();
+playClick();
     let username=document.getElementById("username").value;
 	
 	username=username.toLowerCase().trim();
@@ -765,7 +785,7 @@ for(let i=1;i<=16;i++){
 	if(sub.disabled==true) return;
 	//play sound on check or uncheck
 //	if(sub.disabled==false);
-	//playCheck();
+	playCheck();
 	if(balance<3 && document.getElementById("sub").disabled==false) {
 		alert("You don't have enough money to play !!! Please recharge, then Reload 🔄 the page to Join Game");
 	//sub.disabled=false;
@@ -803,7 +823,7 @@ for(let i=1;i<=16;i++){
 }
 socket.on("updatedjackpot",(data)=>{
 //if(document.getElementById("greeting").style.display=="none")
-//playcoins();
+playcoins();
 const jack=data.jackpot;
 const jackpot=roundTo(jack,2).toFixed(2);
 //if(document.getElementById("draw").style.display!="none")
@@ -845,7 +865,7 @@ socket.on("announce",(data)=>{
 const ann=data.ancmtmsg;
 //if(ann=="done" && joinedgame==true){
 if(ann=="done"){
-//playannnouce();
+playannnouce();
 document.getElementById("greeting").style.display="";
 document.getElementById("greeting").innerHTML="<br><br><span align ='center' style='color:white'>📢 The Game is now open.<br>You can Play Now, check your 3 numbers, and submit your ticket for 3$ 📢";
 canplay=true;
@@ -862,7 +882,7 @@ document.getElementById("hint").style.display="none";
 
 /* Submit ticket */
 function buyTicket(){
-//playClick();
+playClick();
     if(selected.length!=nb){
         alert("Check exactly "+nb+" numbers");
         return;
@@ -1026,7 +1046,7 @@ if(endgame==true){
 
                 // ✅ صوت النتيجة النهائي
               //  await playresult();
-
+playresult();
                 return;
             }
 
