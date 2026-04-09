@@ -451,7 +451,21 @@ function playClick() {
 
     index = (index + 1) % sounds.length;
 }*/
-
+const ballsound=new Audio("ball.mp3");
+function playball() {
+ try {
+        if (!soundUnlocked) {
+            soundUnlocked = true;
+             ballsound.play(); // unlock + play بنفس الوقت
+        } else {
+            coins.currentTime = 0;
+             ballsound.play();
+        }
+    } catch(e) {
+        console.log("Sound error:", e);
+    }
+}
+	
 function playcoins() {
  try {
         if (!soundUnlocked) {
@@ -1055,6 +1069,7 @@ playresult();
             ball.className = "ball";
             ball.innerText = numbers[i];
             container.appendChild(ball);
+			playball();
  document.getElementById("draw").scrollIntoView({
         behavior:"smooth"
     });
