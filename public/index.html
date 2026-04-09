@@ -881,7 +881,7 @@ document.getElementById("hint").style.display="none";
 socket.on("announce",(data)=>{
 const ann=data.ancmtmsg;
 //if(ann=="done" && joinedgame==true){
-if(ann=="done" && document.getElementById("join").innerText!="Join Game") {
+if(ann=="done") {
 playannnouce();
 document.getElementById("greeting").style.display="";
 document.getElementById("greeting").innerHTML="<br><br><span align ='center' style='color:white'>📢 The Game is now open.<br>You can Play Now, check your 3 numbers, and submit your ticket for 3$ 📢";
