@@ -627,6 +627,7 @@ sd.addEventListener("timeupdate", () => {
 */
 //let index2 = 0;
 
+	
 function playCheck() {
 
    try {
@@ -838,10 +839,11 @@ for(let i=1;i<=16;i++){
 }
 socket.on("updatedjackpot",(data)=>{
 //if(document.getElementById("greeting").style.display=="none")
-playcoins();
+//playcoins();
 const jack=data.jackpot;
 const jackpot=roundTo(jack,2).toFixed(2);
-//if(document.getElementById("draw").style.display!="none")
+if(document.getElementById("greeting").style.display=="none")
+	playcoins();
 document.getElementById("draw").innerHTML ="<h2 style='color:white;'>💰 Lotto Jackpot = "+jackpot+" $</h2>";
    
 });
@@ -984,6 +986,7 @@ document.getElementById("join").style.display="none";
 
 	}
 if(endgame==true){
+	playannnouce();
 //playresult2();
     	document.getElementById("draw").style.display="block";
 	 //document.getElementById("results").style.display="";
