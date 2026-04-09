@@ -333,6 +333,27 @@ const sounds=new Audio("join.wav");
 const sound = new Audio("results.mp3");
 const sounds2 =  new Audio("check.wav");
 const annsound=new Audio("ancmt.mp3");
+	let audioCtx;
+let buffer;
+let source;
+/*
+const LOOP_END = 1.6;*/
+
+// 🔓 unlock + تحميل الصوت
+document.addEventListener("click", async () => {
+	 soundUnlocked = true;
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const response = await fetch("ballsgen.mp3");
+        const arrayBuffer = await response.arrayBuffer();
+        buffer = await audioCtx.decodeAudioData(arrayBuffer);
+    }
+
+    if (audioCtx.state === "suspended") {
+        await audioCtx.resume();
+    }
+}, { once: true });
 	/*
 document.addEventListener("click", async () => {
     soundUnlocked = true;
@@ -435,23 +456,23 @@ function playcoins() {
  try {
         if (!soundUnlocked) {
             soundUnlocked = true;
-            await coins.play(); // unlock + play بنفس الوقت
+             coins.play(); // unlock + play بنفس الوقت
         } else {
             coins.currentTime = 0;
-            await coins.play();
+             coins.play();
         }
     } catch(e) {
         console.log("Sound error:", e);
     }
 }
-async function playClick() {
+ function playClick() {
     try {
         if (!soundUnlocked) {
             soundUnlocked = true;
-            await sounds.play(); // unlock + play بنفس الوقت
+             sounds.play(); // unlock + play بنفس الوقت
         } else {
             sounds.currentTime = 0;
-            await sounds.play();
+             sounds.play();
         }
     } catch(e) {
         console.log("Sound error:", e);
@@ -459,27 +480,7 @@ async function playClick() {
 }
 
 
-let audioCtx;
-let buffer;
-let source;
-/*
-const LOOP_END = 1.6;*/
 
-// 🔓 unlock + تحميل الصوت
-document.addEventListener("click", async () => {
-	 soundUnlocked = true;
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        const response = await fetch("ballsgen.mp3");
-        const arrayBuffer = await response.arrayBuffer();
-        buffer = await audioCtx.decodeAudioData(arrayBuffer);
-    }
-
-    if (audioCtx.state === "suspended") {
-        await audioCtx.resume();
-    }
-}, { once: true });
 /*
 	async function playresult2() {
     if (!soundUnlocked || !audioCtx || !buffer) return;
@@ -583,10 +584,10 @@ function playresult() {
 try {
         if (!soundUnlocked) {
             soundUnlocked = true;
-            await sound.play(); // unlock + play بنفس الوقت
+             sound.play(); // unlock + play بنفس الوقت
         } else {
             sound.currentTime = 0;
-            await sound.play();
+             sound.play();
         }
     } catch(e) {
         console.log("Sound error:", e);
@@ -617,10 +618,10 @@ function playCheck() {
    try {
         if (!soundUnlocked) {
             soundUnlocked = true;
-            await sounds2.play(); // unlock + play بنفس الوقت
+             sounds2.play(); // unlock + play بنفس الوقت
         } else {
             sounds2.currentTime = 0;
-            await sounds2.play();
+             sounds2.play();
         }
     } catch(e) {
         console.log("Sound error:", e);
@@ -632,10 +633,10 @@ function playannnouce(){
 	try {
         if (!soundUnlocked) {
             soundUnlocked = true;
-            await annsound.play(); // unlock + play بنفس الوقت
+             annsound.play(); // unlock + play بنفس الوقت
         } else {
             annsound.currentTime = 0;
-            await annsound.play();
+             annsound.play();
         }
     } catch(e) {
         console.log("Sound error:", e);
