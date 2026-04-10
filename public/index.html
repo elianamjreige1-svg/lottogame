@@ -465,7 +465,7 @@ function playball() {
         console.log("Sound error:", e);
     }
 }
-const preres=new Audio("preres.mp3");
+const preres=new Audio("ballsgeneration.mp3");
 function playpreres() {
  try {
         if (!soundUnlocked) {
@@ -1093,7 +1093,7 @@ playresult();
             ball.className = "ball";
             ball.innerText = numbers[i];
             container.appendChild(ball);
-			playpreres();
+			//playpreres();
 			playball();
 			
  document.getElementById("draw").scrollIntoView({
