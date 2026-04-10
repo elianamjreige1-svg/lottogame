@@ -213,6 +213,8 @@ function loadUsers() {
 }
 
 function addUser() {
+    if(document.getElementById("username").value=="" || document.getElementById("password").value=="" ||document.getElementById("balance").value=="")
+        return;
 if(confirm("Are you sure you want to add this user?")){
     fetch("/users", {
         method: "POST",
