@@ -612,6 +612,7 @@ function playresult() {
 try {
         if (!soundUnlocked) {
             soundUnlocked = true;
+			preres.pause();
              sound.play(); // unlock + play بنفس الوقت
         } else {
             sound.currentTime = 0;
