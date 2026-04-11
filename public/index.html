@@ -740,9 +740,11 @@ usernumbers=data.usernbs;
             document.getElementById("player").innerHTML="Player: "+userId+" | Balance: "+balance+" $";
 			//alert(data.old);
 			
-			//if user already submitted a ticket
 			
-			if(old==1 && document.getElementById("greeting").style.display=="none"){
+			if(document.getElementById("greeting").style.display!="none")
+				old=0;
+				//if user already submitted a ticket
+			if(old==1){
 			sub.disabled=true;
 			selectUserNumbers(usernumbers);
 				newround=true;
