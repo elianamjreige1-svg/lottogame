@@ -700,8 +700,7 @@ playClick();
     const passwd=document.getElementById("pass").value;
 	if(username=="" || passwd=="") return;
 	//if(username==au && passwd==ap) {window.location.replace=pg; return;}
-	//if user already submitted a ticket
-	if(document.getElementById("sub").disabled==true) newround=true;
+	
 //username=username.toLowerCase();
 	//takhzin l username wel pass
 	localStorage.setItem("username", username);
@@ -732,16 +731,20 @@ usernumbers=data.usernbs;
 			joinclicked=true;
 		//if(document.getElementById("sub").innerText=="Ticket Submitted")
 		document.getElementById("sub").innerText="Submit Ticket";
-		
+		//if user already submitted a ticket
+	//if(document.getElementById("sub").disabled==true) newround=true;
 		//joinedgame=true;
             nb=data.num;
 			document.getElementById("player").style.display="";			
             document.getElementById("player").innerHTML="Player: "+userId+" | Balance: "+balance+" $";
 			//alert(data.old);
 			
+			//if user already submitted a ticket
 			if(old==1){
 			sub.disabled=true;
 			selectUserNumbers(usernumbers);
+				newround=true;
+				endgame=true;
 			//grid.disabled=true;
 			}
 			else
