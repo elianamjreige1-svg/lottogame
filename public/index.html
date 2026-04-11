@@ -909,8 +909,10 @@ document.getElementById("hint").style.display="none";
 });*/
 
 socket.on("announce",(data)=>{
+	
 const ann=data.ancmtmsg;
 	const doann=document.getElementById("greeting").style.dispay!="none" || document.getElementById("sub").disabled==false;
+	alert("ann="+ann+" joinclicked="+joinclicked+" doann="+doann+"endgame="+endgame);
 //if(ann=="done" && joinedgame==true){
 if(ann=="done" && joinclicked && doann && endgame==false) {
 playannnouce();
