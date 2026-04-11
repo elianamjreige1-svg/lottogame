@@ -910,7 +910,7 @@ document.getElementById("hint").style.display="none";
 
 socket.on("announce",(data)=>{
 const ann=data.ancmtmsg;
-	const doann=document.getElementById("greeting").dispay!="none" || document.getElementById("sub").disabled==false;
+	const doann=document.getElementById("greeting").style.dispay!="none" || document.getElementById("sub").disabled==false;
 //if(ann=="done" && joinedgame==true){
 if(ann=="done" && joinclicked && doann && endgame==false) {
 playannnouce();
