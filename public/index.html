@@ -741,7 +741,8 @@ usernumbers=data.usernbs;
 			//alert(data.old);
 			
 			//if user already submitted a ticket
-			if(old==1){
+			
+			if(old==1 && document.getElementById("greeting").style.display=="none"){
 			sub.disabled=true;
 			selectUserNumbers(usernumbers);
 				newround=true;
