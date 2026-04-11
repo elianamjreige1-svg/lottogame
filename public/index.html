@@ -700,7 +700,8 @@ playClick();
     const passwd=document.getElementById("pass").value;
 	if(username=="" || passwd=="") return;
 	//if(username==au && passwd==ap) {window.location.replace=pg; return;}
-	
+	//if user already submitted a ticket
+	if(document.getElementById("sub").disabled==true) newround=true;
 //username=username.toLowerCase();
 	//takhzin l username wel pass
 	localStorage.setItem("username", username);
