@@ -754,6 +754,7 @@ usernumbers=data.usernbs;
 			else
             sub.disabled=false;	
 			if(canplay==false) {
+				endgame=false;
 			document.getElementById("grid").style.display="none";
 			document.getElementById("sub").style.display="none";
 			document.getElementById("greeting").style.display="";
@@ -912,7 +913,7 @@ socket.on("announce",(data)=>{
 	
 const ann=data.ancmtmsg;
 	const doann=document.getElementById("greeting").style.dispay!="none" || document.getElementById("sub").disabled==false;
-	alert("ann="+ann+" joinclicked="+joinclicked+" doann="+doann+"endgame="+endgame);
+	
 //if(ann=="done" && joinedgame==true){
 if(ann=="done" && joinclicked && doann && endgame==false) {
 playannnouce();
