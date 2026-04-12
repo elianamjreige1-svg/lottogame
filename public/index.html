@@ -992,6 +992,12 @@ function roundTo(num, precision) {
 
 socket.on("result", async (data) => {
 document.getElementById("sub").disabled=true;
+	if(document.getElementById("grid").style.dispay!="none")
+	{
+		document.getElementById("join").innerText="Play Again";
+	document.getElementById("join").style.display="";
+	
+	}
 /*
     if(log==true) {
         document.getElementById("draw").style.display="none";
