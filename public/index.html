@@ -875,7 +875,7 @@ socket.on("updatedjackpot",(data)=>{
 const jack=data.jackpot;
 	const msg=data.message;
 const jackpot=roundTo(jack,2).toFixed(2);
-	alert(msg);
+	//alert(msg);
 if(document.getElementById("greeting").style.display=="none" && msg !="Already played")
 	playcoins();
 document.getElementById("draw").innerHTML ="<h2 style='color:white;'>💰 Lotto Jackpot = "+jackpot+" $</h2>";
