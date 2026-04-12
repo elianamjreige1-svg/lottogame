@@ -431,7 +431,7 @@ let played=0;
 let username, passwd;
 let newround=false;
 let usernumbers=[];
-let submittedclicked=false;
+//let submittedclicked=false;
 //let usernbs=[];
 /* Register player */
 /* Register player */
@@ -963,7 +963,7 @@ let msg;
 	 if(msg=="Ticket submitted"){
 	  endgame=true;
 		 newround=true;
-		 ticketsubmitted=true;
+		// ticketsubmitted=true;
 //document.getElementById("logout").disabled=true;
     const subBtn=document.getElementById("sub");
     subBtn.disabled=true;
@@ -1012,8 +1012,8 @@ document.getElementById("join").style.display="none";
 	}
 	//else if(document.getElementById("sub").innerText=="Ticket Submitted" && document.getElementById("sub").disabled==true){
 	//if the player didn't click submit ticket
-//	if(endgame==false && joinclicked && newround==false){
-	if(ticketsubmitted==false && joinclicked ){
+	if(endgame==false && joinclicked && newround==false){
+	//if(ticketsubmitted==false && joinclicked ){
 		   document.getElementById("draw").style.display="none";
         document.getElementById("results").style.display="none";
 		  document.getElementById("grid").style.display="none";
@@ -1132,7 +1132,7 @@ playresult();
 //joinedgame=false;
 //endgame=false;
 newround=false;
-ticketsubmitted=false;
+//ticketsubmitted=false;
 selected=[];
 document.getElementById("sub").disabled=true;
 });
