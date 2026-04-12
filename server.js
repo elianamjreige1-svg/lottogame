@@ -152,7 +152,7 @@ app.post("/ticket", async (req, res) => {
         winprice += 3;
 		 jackpot=roundTo(winprice*0.9,2).toFixed(2);
         res.json({ message: "Ticket submitted",jackpot:jackpot });
-		io.emit("updatedjackpot",{message:"Already played",jackpot:jackpot});
+		io.emit("updatedjackpot",{message:"Ticket submitted",jackpot:jackpot});
 
     } catch (err) {
         console.error(err);
