@@ -266,11 +266,11 @@ if(confirm("Are you sure you want to draw balls?")){
 }
 
 function again() {
-if(confirm("Are you sure you want to play again?"))
+if(confirm("Are you sure you want to play again?")){
     fetch("/again");
     document.getElementById("draw").disabled=false;
     document.getElementById("again").disabled=true;
-}
+}}
 
 loadUsers();
 </script>
