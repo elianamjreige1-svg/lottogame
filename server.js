@@ -136,7 +136,7 @@ app.post("/ticket", async (req, res) => {
 
     try {
         const result = await query(
-            'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ?',
+            'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ? and played=0',
             [userId]
         );
 		 jackpot= roundTo(winprice*0.9,2).toFixed(2);
