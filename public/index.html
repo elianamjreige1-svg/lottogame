@@ -1128,6 +1128,8 @@ if(endgame==true && newround==true){
               //  await playresult();
 				stoppreres();
 playresult();
+				document.getElementById("join").style.display="";
+				document.getElementById("join").innerText="Play Again";
                 return;
             }
 
@@ -1150,8 +1152,7 @@ playresult();
         }
 
     }, 2000);
-	document.getElementById("join").style.display="";
-				document.getElementById("join").innerText="Play Again";
+	
 }//end if joined game
 //joinedgame=false;
 //endgame=false;
