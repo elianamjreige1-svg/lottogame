@@ -1049,6 +1049,8 @@ return;
 	document.getElementById("greeting").innerHTML="<br><br>⏳Welcome to Multiplayer Lotto Game. The game has not started yet. You will be informed when the game starts... If not informed, you can Reload 🔄 the page and retry ⏳";
 	
 if(endgame==true && newround==true){
+	
+document.getElementById("join").disabled=true;
 	playpreres();
 //playresult2();
     	document.getElementById("draw").style.display="block";
