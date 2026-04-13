@@ -1119,8 +1119,7 @@ if(endgame==true && newround==true){
                 });
 				document.getElementById("results").style.display="block";
                 document.getElementById("results").innerHTML = resultHTML;
-				document.getElementById("join").style.display="";
-				document.getElementById("join").innerText="Play Again";
+				
                 document.getElementById("results").scrollIntoView({
                     behavior:"smooth"
                 });
@@ -1151,6 +1150,8 @@ playresult();
         }
 
     }, 2000);
+	document.getElementById("join").style.display="";
+				document.getElementById("join").innerText="Play Again";
 }//end if joined game
 //joinedgame=false;
 //endgame=false;
