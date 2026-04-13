@@ -998,6 +998,7 @@ function roundTo(num, precision) {
 /* Receive results */
 
 socket.on("result", async (data) => {
+	if(!joinclicked) return;
 document.getElementById("sub").disabled=true;
 	/*if(document.getElementById("greeting").style.display!="none")
 	{
