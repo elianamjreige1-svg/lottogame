@@ -979,6 +979,7 @@ let msg;
 		else
 	 {
 alert("Submission failed. You already submitted a ticket!");
+		 removecellsselection();
 		return; 
 	 }
 
@@ -1012,6 +1013,7 @@ document.getElementById("join").style.display="none";
 	document.getElementById("join").style.display="";
 	
 	}
+	
 /*
     if(log==true) {
         document.getElementById("draw").style.display="none";
