@@ -1131,7 +1131,7 @@ document.getElementById("join").disabled=true;
               //  await playresult();
 				stoppreres();
 playresult();
-				
+			document.getElementById("join").disabled=false;	
                 return;
             }
 
@@ -1154,7 +1154,7 @@ playresult();
         }
 
     }, 2000);
-	document.getElementById("join").disabled=false;
+	
 	
 }//end if joined game
 //joinedgame=false;
