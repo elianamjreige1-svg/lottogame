@@ -1114,9 +1114,15 @@ document.getElementById("join").disabled=true;
 
                 <br><h2>Results</h2>
                 `;
-				const d = new Date();
+			//	const d = new Date();
 				
-				resultHTML+="📅"+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" ⏰"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+				//resultHTML+="📅"+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" ⏰"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+				 const now = new Date();
+    let hours = now.getHours();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const time = hours + ':' + now.getMinutes().toString().padStart(2,'0') + now.getSeconds().toString().padStart(2,'0') +" " + ampm;
+resultHTML+="📅"+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" ⏰"+time;
                 data.results.forEach(r => {
 
                     let bgColor="gray";
