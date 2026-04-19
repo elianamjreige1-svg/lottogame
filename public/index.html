@@ -1111,9 +1111,11 @@ document.getElementById("join").disabled=true;
                 <span style='color:#4CAF50'>3 matches = 200 LP</span>
                 </h3>
 
-                <br><h2>Results
+                <br><h2>Results</h2>
                 `;
-				resultHTML+=new Date()+"</h2>";
+				const d = new Date();
+				
+				resultHTML+=d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+"@"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
                 data.results.forEach(r => {
 
                     let bgColor="gray";
