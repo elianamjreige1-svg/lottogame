@@ -1121,8 +1121,8 @@ document.getElementById("join").disabled=true;
     let hours = now.getHours();
     let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
-    const time = hours + ':' + now.getMinutes().toString().padStart(2,'0') +":"+ now.getSeconds().toString().padStart(2,'0') +" " + ampm;
-resultHTML+="📅"+now.getDate()+"/"+(now.getMonth()+1)+"/"+now.getFullYear()+" ⏰"+time;
+    const time = hours + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
+resultHTML+="📅"+now.getDate()+"/"+(now.getMonth()+1)+"/"+now.getFullYear()+"  ⏰"+time;
                 data.results.forEach(r => {
 
                     let bgColor="gray";
