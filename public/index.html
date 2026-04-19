@@ -1116,7 +1116,7 @@ document.getElementById("join").disabled=true;
                 `;
 				const d = new Date();
 				
-				resultHTML+=d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+"@"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
+				resultHTML+="📅"+d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" ⏰"+d.getHours()+":"+d.getMinutes()+":"+d.getSeconds();
                 data.results.forEach(r => {
 
                     let bgColor="gray";
