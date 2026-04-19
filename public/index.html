@@ -877,7 +877,8 @@ const jack=data.jackpot;
 	const msg=data.message;
 const jackpot=roundTo(jack,2).toFixed(2);
 	//alert(msg);
-if(document.getElementById("greeting").style.display=="none" && msg !="Already played" && document.getElementById("join").style.display=="none"){
+//if(document.getElementById("greeting").style.display=="none" && msg !="Already played" && document.getElementById("join").style.display=="none"){
+	if(document.getElementById("greeting").style.display=="none"  && document.getElementById("join").style.display=="none"){
 	playcoins();
 document.getElementById("draw").innerHTML ="<h2 style='color:white;'>💰 Lotto Jackpot = "+jackpot+" $</h2>";
 }
@@ -1110,9 +1111,9 @@ document.getElementById("join").disabled=true;
                 <span style='color:#4CAF50'>3 matches = 200 LP</span>
                 </h3>
 
-                <br><h2>Results</h2>
+                <br><h2>Results
                 `;
-
+				resultHTML+=new Date()+"</h2>";
                 data.results.forEach(r => {
 
                     let bgColor="gray";
