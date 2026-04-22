@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const mysql = require('mysql2');
 const util = require("util");
 
-let winprice;
+let winprice=0;
 let pointamount = 0;
 let canplay = false;
 
