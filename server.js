@@ -333,7 +333,7 @@ app.get("/again", async (req, res) => {
     winprice = 0;
   }
 
-  console.log("winprice=" + winprice);
+  log("winprice=" + winprice);
 
 } catch (err) {
   console.error(err);
