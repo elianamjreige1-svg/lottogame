@@ -36,7 +36,7 @@ pool.on('error', (err) => {
 
 const query = util.promisify(pool.query).bind(pool);
 
-try {
+/*try {
     const results =  query(
       'SELECT * FROM lottoprice '
     );
@@ -53,7 +53,7 @@ try {
   } catch (err) {
     console.error(err);
     res.status(500).send("DB error");
-  }
+  }*/
 
 // ================= LOG =================
 function log(msg) {
@@ -306,6 +306,24 @@ app.get("/again", async (req, res) => {
     log("Game reset");
     res.send("ok");
 	io.emit("announce", { ancmtmsg: "done" });
+	try {
+    const results =  query(
+      'SELECT * FROM lottoprice '
+    );
+
+    if (results.length > 0) {
+      const w= results[0].winprice;
+
+      winprice = w;
+
+      
+
+    } 
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("DB error");
+	}
 });
 
 // ================= SERVER =================
