@@ -36,6 +36,25 @@ pool.on('error', (err) => {
 
 const query = util.promisify(pool.query).bind(pool);
 
+try {
+    const results = await query(
+      'SELECT * FROM lottoprice WHERE '
+    );
+
+    if (results.length > 0) {
+      const w= results[0].winprice;
+
+      winprice = w;
+
+      
+
+    } 
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("DB error");
+  }
+
 // ================= LOG =================
 function log(msg) {
     console.log(msg);
@@ -227,6 +246,12 @@ app.get("/draw", async (req, res) => {
 
     res.json({ draw });
 	//io.emit("gameclosed",{msgclose:"game closed"});
+	
+await query(
+            'UPDATE lottoprice SET winprice =  ? ',
+            [winprice]
+        );
+	
 });
 
 app.post("/register", async (req, res) => {
