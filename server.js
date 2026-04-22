@@ -48,6 +48,7 @@ try {
       
 
     } 
+	else winprice=0;
 log("winprice="+winprice);
   } catch (err) {
     console.error(err);
