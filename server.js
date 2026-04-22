@@ -38,7 +38,7 @@ const query = util.promisify(pool.query).bind(pool);
 
 try {
     const results =  query(
-      'SELECT * FROM lottoprice WHERE '
+      'SELECT * FROM lottoprice '
     );
 
     if (results.length > 0) {
