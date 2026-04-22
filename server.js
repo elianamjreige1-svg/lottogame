@@ -35,7 +35,7 @@ pool.on('error', (err) => {
 });
 
 const query = util.promisify(pool.query).bind(pool);
-try {
+/*try {
   const [results] = await query('SELECT * FROM lottoprice');
 
   if (results.length > 0) {
@@ -49,7 +49,7 @@ try {
 
 } catch (err) {
   console.error(err);
-}
+}*/
 /*try {
     const results =  query(
       'SELECT * FROM lottoprice '
