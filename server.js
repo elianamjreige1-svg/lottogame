@@ -240,7 +240,11 @@ app.get("/draw", async (req, res) => {
             [value, username]
         );
     }
-
+await query(
+            'UPDATE lottoprice SET winprice =  ? ',
+            [winprice]
+        );
+	
     io.emit("result", {
         draw:draw.join(" "),
         results,
@@ -263,10 +267,7 @@ app.get("/draw", async (req, res) => {
     res.json({ draw });
 	//io.emit("gameclosed",{msgclose:"game closed"});
 	
-await query(
-            'UPDATE lottoprice SET winprice =  ? ',
-            [winprice]
-        );
+
 	
 });
 
@@ -332,7 +333,7 @@ app.get("/again", async (req, res) => {
     winprice = 0;
   }
 
- // console.log("winprice=" + winprice);
+  console.log("winprice=" + winprice);
 
 } catch (err) {
   console.error(err);
