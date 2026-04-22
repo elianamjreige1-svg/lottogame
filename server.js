@@ -172,7 +172,7 @@ app.post("/ticket", async (req, res) => {
             'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ? and played=0',
             [userId]
         );
-		 jackpot= roundTo(winprice*0.9,2).toFixed(2);
+		 jackpot= roundTo(winprice,2).toFixed(2);
         // already played
 		
         if (result.affectedRows === 0) {
@@ -244,7 +244,7 @@ await query(
             'UPDATE lottoprice SET winprice =  ? ',
             [winprice]
         );
-	
+	log("winprice draw="+winprice);
     io.emit("result", {
         draw:draw.join(" "),
         results,
@@ -333,7 +333,7 @@ app.get("/again", async (req, res) => {
     winprice = 0;
   }
 
-  log("winprice=" + winprice);
+  log("winprice again=" + winprice);
 
 } catch (err) {
   console.error(err);
