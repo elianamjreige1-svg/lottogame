@@ -159,7 +159,7 @@ app.get("/start", async (req, res) => {
 	io.emit("announce", { ancmtmsg: "done" });
     res.send("ok");
 });
-let jackpot;
+let jackpot=winprice;
 app.post("/ticket", async (req, res) => {
     const { userId, numbers } = req.body;
 
@@ -332,7 +332,7 @@ log("results.length = "+results.length);
   } else {
     winprice = 0;
   }
-jackpot=winprice;
+//jackpot=winprice;
   log("winprice again=" + winprice);
 
 } catch (err) {
