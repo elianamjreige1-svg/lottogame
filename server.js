@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const mysql = require('mysql2');
 const util = require("util");
 
-let winprice = 0;
+let winprice;
 let pointamount = 0;
 let canplay = false;
 
@@ -242,6 +242,8 @@ app.get("/draw", async (req, res) => {
     resultsbyuser = [];
 	if(pointamount!=0){
     winprice = 0;}
+	else
+		winprice=winprice;
     canplay = false;
 
     res.json({ draw });
@@ -312,14 +314,14 @@ app.get("/again", async (req, res) => {
     );
 
     if (results.length > 0) {
-      const w= results[0].winprice;
+      let w= results[0].winprice;
 
       winprice = w;
 
       
 
     } 
-
+alert(winprice);
   } catch (err) {
     console.error(err);
     res.status(500).send("DB error");
