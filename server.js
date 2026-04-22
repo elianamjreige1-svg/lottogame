@@ -246,7 +246,7 @@ app.post("/register", async (req, res) => {
 
       if (user.played == 1) olduser = 1;
 
-      const jackpotValue = roundTo(winprice * 0.9, 2);
+      const jackpotValue = roundTo(winprice, 2);
 
       res.json({
         userId: username,
