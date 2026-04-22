@@ -240,11 +240,11 @@ app.get("/draw", async (req, res) => {
             [value, username]
         );
     }
-await query(
+/*await query(
             'UPDATE lottoprice SET winprice =  ? ',
             [winprice]
         );
-	log("winprice draw="+winprice);
+	log("winprice draw="+winprice);*/
     io.emit("result", {
         draw:draw.join(" "),
         results,
@@ -260,8 +260,8 @@ await query(
     resultsbyuser = [];
 	if(pointamount!=0){
     winprice = 0;}
-	else
-		winprice=winprice;
+	//else
+	//	winprice=winprice;
     canplay = false;
 
     res.json({ draw });
@@ -323,7 +323,7 @@ app.get("/again", async (req, res) => {
     log("Game reset");
     res.send("ok");
 	io.emit("announce", { ancmtmsg: "done" });
-	try {
+/*	try {
   const results = await query('SELECT * FROM lottoprice');
 log("results.length = "+results.length);
   if (results.length > 0) {
@@ -337,7 +337,7 @@ log("results.length = "+results.length);
 
 } catch (err) {
   console.error(err);
-}
+}*/
 });
 
 // ================= SERVER =================
