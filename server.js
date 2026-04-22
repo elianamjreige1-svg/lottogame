@@ -36,24 +36,20 @@ pool.on('error', (err) => {
 
 const query = util.promisify(pool.query).bind(pool);
 try {
-    const results =  query(
-      'SELECT * FROM lottoprice '
-    );
+  const [results] = await query('SELECT * FROM lottoprice');
 
-    if (results.length > 0) {
-      let w= results[0].winprice;
+  if (results.length > 0) {
+    let w = results[0].winprice;
+    winprice = w;
+  } else {
+    winprice = 0;
+  }
 
-      winprice = w;
+  console.log("winprice=" + winprice);
 
-      
-
-    } 
-	else winprice=0;
-log("winprice="+winprice);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("DB error");
-	}
+} catch (err) {
+  console.error(err);
+}
 /*try {
     const results =  query(
       'SELECT * FROM lottoprice '
@@ -327,23 +323,20 @@ app.get("/again", async (req, res) => {
     res.send("ok");
 	io.emit("announce", { ancmtmsg: "done" });
 	try {
-    const results =  query(
-      'SELECT * FROM lottoprice '
-    );
+  const [results] = await query('SELECT * FROM lottoprice');
 
-    if (results.length > 0) {
-      let w= results[0].winprice;
+  if (results.length > 0) {
+    let w = results[0].winprice;
+    winprice = w;
+  } else {
+    winprice = 0;
+  }
 
-      winprice = w;
+ // console.log("winprice=" + winprice);
 
-      
-
-    } 
-log("winprice="+winprice);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("DB error");
-	}
+} catch (err) {
+  console.error(err);
+}
 });
 
 // ================= SERVER =================
