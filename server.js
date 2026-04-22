@@ -321,7 +321,7 @@ app.get("/again", async (req, res) => {
       
 
     } 
-alert(winprice);
+log("winprice="+winprice);
   } catch (err) {
     console.error(err);
     res.status(500).send("DB error");
