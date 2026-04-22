@@ -342,8 +342,28 @@ jackpot=winprice;
 
 // ================= SERVER =================
 // ================= SERVER =================
-const PORT = process.env.PORT || 3000;
+
+async function startServer() {
+  try {
+    const [results] = await query('SELECT * FROM lottoprice');
+
+    if (results.length > 0) {
+      winprice = results[0].winprice;
+    } else {
+      winprice = 0;
+    }
+
+    console.log("winprice=" + winprice);
+
+   const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
     console.log("Server running on port " + PORT);
 });
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+startServer();
+
