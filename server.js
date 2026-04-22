@@ -37,7 +37,7 @@ pool.on('error', (err) => {
 const query = util.promisify(pool.query).bind(pool);
 
 try {
-    const results = await query(
+    const results =  query(
       'SELECT * FROM lottoprice WHERE '
     );
 
