@@ -324,8 +324,8 @@ app.get("/again", async (req, res) => {
     res.send("ok");
 	io.emit("announce", { ancmtmsg: "done" });
 	try {
-  const [results] = await query('SELECT * FROM lottoprice');
-
+  const results = await query('SELECT * FROM lottoprice');
+log("results.length = "+results.length);
   if (results.length > 0) {
     let w = results[0].winprice;
     winprice = w;
