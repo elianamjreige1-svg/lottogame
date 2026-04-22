@@ -35,7 +35,24 @@ pool.on('error', (err) => {
 });
 
 const query = util.promisify(pool.query).bind(pool);
+try {
+    const results =  query(
+      'SELECT * FROM lottoprice '
+    );
 
+    if (results.length > 0) {
+      let w= results[0].winprice;
+
+      winprice = w;
+
+      
+
+    } 
+log("winprice="+winprice);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("DB error");
+	}
 /*try {
     const results =  query(
       'SELECT * FROM lottoprice '
