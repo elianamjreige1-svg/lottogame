@@ -231,6 +231,7 @@ app.get("/draw", async (req, res) => {
         pointamount = 0;
     } else {
         pointamount = roundTo(winprice / totalmatches, 2).toFixed(2);
+		winprice=0;
     }
 
     // update balances
