@@ -173,7 +173,7 @@ app.post("/ticket", async (req, res) => {
             [userId]
         );
 		
-		 jackpot= Number(winprice);
+		 jackpot= roundTo(Number(winprice),2).toFixed(2);
 	
         // already played
 		
@@ -185,10 +185,11 @@ app.post("/ticket", async (req, res) => {
 
         tickets.push({ userId, numbers });
         winprice = Number(winprice) + 2.7;
+		winprice=roundTo(winprice,2).toFixed(2);
 		 jackpot=winprice;
         res.json({ message: "Ticket submitted",jackpot:jackpot });
 		io.emit("updatedjackpot",{message:"Ticket submitted",jackpot:jackpot});
-	log("jackpot in ticket="+jackpot);
+	//log("jackpot in ticket="+jackpot);
     } catch (err) {
         console.error(err);
         res.status(500).send("DB error");
@@ -202,7 +203,7 @@ app.get("/draw", async (req, res) => {
     let results = [];
     let totalmatches = 0;
 
-   // winprice = roundTo(winprice, 2);
+    winprice = roundTo(winprice, 2).toFixed(2);
 
     tickets.forEach(ticket => {
         const playerNumbers = ticket.numbers.map(Number);
@@ -242,11 +243,12 @@ app.get("/draw", async (req, res) => {
             [value, username]
         );
     }
+	
 await query(
             'UPDATE lottoprice SET winprice =  ? where id=1',
             [winprice]
         );
-	log("winprice draw="+winprice);
+	//log("winprice draw="+winprice);
     io.emit("result", {
         draw:draw.join(" "),
         results,
@@ -290,7 +292,7 @@ app.post("/register", async (req, res) => {
 
       if (user.played == 1) olduser = 1;
 
-      const jackpotValue = winprice;
+      const jackpotValue = roundTo(winprice,2).toFixed(2);
 
       res.json({
         userId: username,
@@ -327,15 +329,15 @@ app.get("/again", async (req, res) => {
 	io.emit("announce", { ancmtmsg: "done" });
 	try {
   const results = await query('SELECT * FROM lottoprice where id=1');
-log("results.length = "+results.length);
+//log("results.length = "+results.length);
   if (results.length > 0) {
    const w = results[0].winprice;
-    winprice = w;
+    winprice = roundTo(w,2).toFixed(2);
   } else {
     winprice = 0;
   }
 //jackpot=winprice;
-  log("winprice again=" + winprice);
+  //log("winprice again=" + winprice);
 
 } catch (err) {
   console.error(err);
@@ -351,11 +353,12 @@ async function startServer() {
 
     if (results.length > 0) {
       winprice = Number(results[0].winprice);
+		winprice=roundTo(winprice,2).toFixed(2);
     } else {
       winprice = 0;
     }
 
-    log("winprice=" + winprice);
+  //  log("winprice=" + winprice);
 
    const PORT = process.env.PORT || 3000;
 
