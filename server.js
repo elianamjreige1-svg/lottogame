@@ -172,6 +172,7 @@ app.post("/ticket", async (req, res) => {
             'UPDATE users SET played = 1, balance = balance - 3 WHERE username = ? and played=0',
             [userId]
         );
+		log("winprice in ticket="+winprice);
 		 jackpot= roundTo(winprice,2).toFixed(2);
         // already played
 		
@@ -332,7 +333,7 @@ log("results.length = "+results.length);
   } else {
     winprice = 0;
   }
-jackpot=winprice;
+//jackpot=winprice;
   log("winprice again=" + winprice);
 
 } catch (err) {
