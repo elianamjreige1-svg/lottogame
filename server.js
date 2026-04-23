@@ -159,7 +159,7 @@ app.get("/start", async (req, res) => {
 	io.emit("announce", { ancmtmsg: "done" });
     res.send("ok");
 });
-let jackpot=winprice;
+let jackpot=0;
 app.post("/ticket", async (req, res) => {
     const { userId, numbers } = req.body;
 
@@ -244,7 +244,7 @@ await query(
             'UPDATE lottoprice SET winprice =  ? where id=1',
             [winprice]
         );
-	/*log("winprice draw="+winprice);*/
+	log("winprice draw="+winprice);
     io.emit("result", {
         draw:draw.join(" "),
         results,
@@ -332,8 +332,8 @@ log("results.length = "+results.length);
   } else {
     winprice = 0;
   }
-//jackpot=winprice;
- // log("winprice again=" + winprice);
+jackpot=winprice;
+  log("winprice again=" + winprice);
 
 } catch (err) {
   console.error(err);
@@ -353,7 +353,7 @@ async function startServer() {
       winprice = 0;
     }
 
-    console.log("winprice=" + winprice);
+    log("winprice=" + winprice);
 
    const PORT = process.env.PORT || 3000;
 
