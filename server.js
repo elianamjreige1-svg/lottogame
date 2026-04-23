@@ -173,7 +173,7 @@ app.post("/ticket", async (req, res) => {
             [userId]
         );
 		
-		 jackpot= roundTo(winprice,2).toFixed(2);
+		 jackpot= winprice;
 	
         // already played
 		
@@ -202,7 +202,7 @@ app.get("/draw", async (req, res) => {
     let results = [];
     let totalmatches = 0;
 
-    winprice = roundTo(winprice, 2);
+   // winprice = roundTo(winprice, 2);
 
     tickets.forEach(ticket => {
         const playerNumbers = ticket.numbers.map(Number);
@@ -229,7 +229,7 @@ app.get("/draw", async (req, res) => {
     if (totalmatches === 0) {
         pointamount = 0;
     } else {
-        pointamount = roundTo(winprice / totalmatches, 2);
+        pointamount = roundTo(winprice / totalmatches, 2).toFixed(2);
     }
 
     // update balances
@@ -290,7 +290,7 @@ app.post("/register", async (req, res) => {
 
       if (user.played == 1) olduser = 1;
 
-      const jackpotValue = roundTo(winprice, 2);
+      const jackpotValue = winprice;
 
       res.json({
         userId: username,
