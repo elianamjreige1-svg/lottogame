@@ -964,7 +964,8 @@ let msg;
     .then(data=>{
 	 msg=data.message;
 	 const jack=data.jackpot;
-	 const jackpot=roundTo(jack,2).toFixed(2);
+	 //const jackpot=roundTo(jack,2).toFixed(2);
+		const jackpot=jack;
 	// alert(jackpot);
 	 if(msg=="Ticket submitted"){
 	  endgame=true;
