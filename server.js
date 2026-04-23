@@ -184,8 +184,8 @@ app.post("/ticket", async (req, res) => {
         }
 
         tickets.push({ userId, numbers });
-        winprice += 2.7;
-		 jackpot=roundTo(winprice,2).toFixed(2);
+        winprice = winprice+2.7;
+		 jackpot=winprice;
         res.json({ message: "Ticket submitted",jackpot:jackpot });
 		io.emit("updatedjackpot",{message:"Ticket submitted",jackpot:jackpot});
 	log("jackpot in ticket="+jackpot);
@@ -329,7 +329,7 @@ app.get("/again", async (req, res) => {
   const results = await query('SELECT * FROM lottoprice where id=1');
 log("results.length = "+results.length);
   if (results.length > 0) {
-    let w = results[0].winprice;
+   const w = results[0].winprice;
     winprice = w;
   } else {
     winprice = 0;
