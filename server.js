@@ -159,7 +159,7 @@ app.get("/start", async (req, res) => {
 	io.emit("announce", { ancmtmsg: "done" });
     res.send("ok");
 });
-let jackpot=0;
+let jackpot=winprice;
 app.post("/ticket", async (req, res) => {
     const { userId, numbers } = req.body;
 
@@ -240,11 +240,11 @@ app.get("/draw", async (req, res) => {
             [value, username]
         );
     }
-/*await query(
-            'UPDATE lottoprice SET winprice =  ? ',
+await query(
+            'UPDATE lottoprice SET winprice =  ? where id=1',
             [winprice]
         );
-	log("winprice draw="+winprice);*/
+	/*log("winprice draw="+winprice);*/
     io.emit("result", {
         draw:draw.join(" "),
         results,
@@ -323,8 +323,8 @@ app.get("/again", async (req, res) => {
     log("Game reset");
     res.send("ok");
 	io.emit("announce", { ancmtmsg: "done" });
-/*	try {
-  const results = await query('SELECT * FROM lottoprice');
+	try {
+  const results = await query('SELECT * FROM lottoprice where id=1');
 log("results.length = "+results.length);
   if (results.length > 0) {
     let w = results[0].winprice;
@@ -333,11 +333,11 @@ log("results.length = "+results.length);
     winprice = 0;
   }
 //jackpot=winprice;
-  log("winprice again=" + winprice);
+ // log("winprice again=" + winprice);
 
 } catch (err) {
   console.error(err);
-}*/
+}
 });
 
 // ================= SERVER =================
@@ -345,7 +345,7 @@ log("results.length = "+results.length);
 
 async function startServer() {
   try {
-    const [results] = await query('SELECT * FROM lottoprice');
+    const [results] = await query('SELECT * FROM lottoprice where id=1');
 
     if (results.length > 0) {
       winprice = results[0].winprice;
