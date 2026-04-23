@@ -174,7 +174,7 @@ app.post("/ticket", async (req, res) => {
         );
 		
 		 jackpot= roundTo(winprice,2).toFixed(2);
-		log("jackpot in ticket="+jackpot);
+	
         // already played
 		
         if (result.affectedRows === 0) {
@@ -188,7 +188,7 @@ app.post("/ticket", async (req, res) => {
 		 jackpot=roundTo(winprice,2).toFixed(2);
         res.json({ message: "Ticket submitted",jackpot:jackpot });
 		io.emit("updatedjackpot",{message:"Ticket submitted",jackpot:jackpot});
-
+	log("jackpot in ticket="+jackpot);
     } catch (err) {
         console.error(err);
         res.status(500).send("DB error");
