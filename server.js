@@ -231,7 +231,7 @@ app.get("/draw", async (req, res) => {
         pointamount = 0;
     } else {
         pointamount = roundTo(winprice / totalmatches, 2).toFixed(2);
-		winprice=0;
+		//winprice=0;
     }
 
     // update balances
@@ -245,10 +245,7 @@ app.get("/draw", async (req, res) => {
         );
     }
 	
-await query(
-            'UPDATE lottoprice SET winprice =  ? where id=1',
-            [winprice]
-        );
+
 	//log("winprice draw="+winprice);
     io.emit("result", {
         draw:draw.join(" "),
@@ -270,6 +267,10 @@ await query(
     canplay = false;
 
     res.json({ draw });
+	await query(
+            'UPDATE lottoprice SET winprice =  ? where id=1',
+            [winprice]
+        );
 	//io.emit("gameclosed",{msgclose:"game closed"});
 	
 
