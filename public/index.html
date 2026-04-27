@@ -1125,7 +1125,7 @@ document.getElementById("join").disabled=true;
     let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
     const time = hours.toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
-resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time+"<br><input type='text' id='searchInput' placeholder='Search by player or number...'>";
+resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time+"<br><input type='text' id='searchInput' placeholder='Search by player or number...'><div id='results'></div>";
                
 			/*	data.results.forEach(r => {
 
