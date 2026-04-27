@@ -1125,8 +1125,10 @@ document.getElementById("join").disabled=true;
     let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
     const time = hours.toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
-resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time;
-               
+resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time+"<br>
+<input type='text' id='searchInput' placeholder='Search by player / numbers / win...' style='padding:6px;width:250px;margin-bottom:10px;'>
+	<div id='resultsList'></div>";
+             /*  
 				data.results.forEach(r => {
 
                     let bgColor="gray";
@@ -1140,12 +1142,56 @@ resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+
                     +r.numbers+"] | Win: "
                     +roundTo(r.matches*pointa,2).toFixed(2)+" $</h4>";
 
-                });
+                }); */
 
 
 				
 				document.getElementById("results").style.display="block";
                 document.getElementById("results").innerHTML = resultHTML;
+
+
+function renderResults(filterText = "") {
+
+    let html = "";
+    const text = filterText.toLowerCase();
+
+    data.results
+    .filter(r => {
+        const win = (r.matches * pointa).toString();
+
+        return (
+            r.userId.toString().toLowerCase().includes(text) ||
+            r.numbers.toString().toLowerCase().includes(text) ||
+            win.includes(text)
+        );
+    })
+    .forEach(r => {
+
+        let bgColor = "gray";
+
+        if(r.matches == 1) bgColor = "#c0392b";
+        else if(r.matches == 8) bgColor = "#2a5298";
+        else if(r.matches == 200) bgColor = "#4CAF50";
+
+        html += "<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "
+        + r.userId + " | Grid: ["
+        + r.numbers + "] | Win: "
+        + roundTo(r.matches * pointa, 2).toFixed(2) + " $</h4>";
+    });
+
+    resultsList.innerHTML = html;
+}
+
+				searchInput.addEventListener("input", function() {
+    renderResults(this.value);
+});
+
+				renderResults();
+
+
+				
+				const searchInput = document.getElementById("searchInput");
+const resultsList = document.getElementById("resultsList");
 				
                 document.getElementById("results").scrollIntoView({
                     behavior:"smooth"
