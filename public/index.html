@@ -1125,8 +1125,9 @@ document.getElementById("join").disabled=true;
     let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
     const time = hours.toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
-resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time;
-                data.results.forEach(r => {
+resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time+"<br><input type="text" id="searchInput" placeholder="Search by player or number...">";
+               const searchInput = document.getElementById("searchInput");
+			/*	data.results.forEach(r => {
 
                     let bgColor="gray";
 
@@ -1139,7 +1140,41 @@ resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+
                     +r.numbers+"] | Win: "
                     +roundTo(r.matches*pointa,2).toFixed(2)+" $</h4>";
 
-                });
+                });*/
+
+function renderResults(filterText = "") {
+    let resultHTML = "";
+
+    data.results
+    .filter(r => {
+        const text = filterText.toLowerCase();
+        return (
+            r.userId.toLowerCase().includes(text) ||
+            r.numbers.toString().toLowerCase().includes(text)
+        );
+    })
+    .forEach(r => {
+
+        let bgColor = "gray";
+
+        if(r.matches == 1) bgColor = "#c0392b";
+        else if(r.matches == 8) bgColor = "#2a5298";
+        else if(r.matches == 200) bgColor = "#4CAF50";
+
+        resultHTML += "<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "
+        + r.userId + " | Grid: ["
+        + r.numbers + "] | Win: "
+        + roundTo(r.matches * pointa, 2).toFixed(2) + " $</h4>";
+
+    });
+
+    resultsDiv.innerHTML = resultHTML;
+}
+				renderResults();
+				searchInput.addEventListener("input", function() {
+    renderResults(this.value);
+});
+				
 				document.getElementById("results").style.display="block";
                 document.getElementById("results").innerHTML = resultHTML;
 				
