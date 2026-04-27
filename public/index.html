@@ -1126,7 +1126,7 @@ document.getElementById("join").disabled=true;
     hours = hours % 12 || 12;
     const time = hours.toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
 resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time+"<br>
-<input type='text' id='searchInput' placeholder='Search by player / numbers / win...' style='padding:6px;width:250px;margin-bottom:10px;'>
+<input type='text' id='searchInput' placeholder='Search by player / numbers / win...' style='padding:6px;width:250px;margin-bottom:10px'>
 	<div id='resultsList'></div>";
              /*  
 				data.results.forEach(r => {
@@ -1149,6 +1149,8 @@ resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+
 				document.getElementById("results").style.display="block";
                 document.getElementById("results").innerHTML = resultHTML;
 
+				const searchInput = document.getElementById("searchInput");
+const resultsList = document.getElementById("resultsList");
 
 function renderResults(filterText = "") {
 
@@ -1190,8 +1192,8 @@ function renderResults(filterText = "") {
 
 
 				
-				const searchInput = document.getElementById("searchInput");
-const resultsList = document.getElementById("resultsList");
+				
+
 				
                 document.getElementById("results").scrollIntoView({
                     behavior:"smooth"
