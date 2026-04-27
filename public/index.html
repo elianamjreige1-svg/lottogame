@@ -1170,7 +1170,7 @@ function renderResults(filterText = "") {
 
     resultsDiv.innerHTML = resultHTML;
 }
-				
+renderResults();				
 				searchInput.addEventListener("input", function() {
     renderResults(this.value);
 });
@@ -1218,7 +1218,7 @@ newround=false;
 //ticketsubmitted=false;
 selected=[];
 document.getElementById("sub").disabled=true;
-renderResults();
+
 });
 
 
