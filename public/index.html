@@ -1126,7 +1126,7 @@ document.getElementById("join").disabled=true;
     hours = hours % 12 || 12;
     const time = hours.toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
 resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time+"<br><input type='text' id='searchInput' placeholder='Search by player or number...'>";
-               const searchInput = document.getElementById("searchInput");
+               
 			/*	data.results.forEach(r => {
 
                     let bgColor="gray";
@@ -1143,13 +1143,13 @@ resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+
                 });*/
 
 function renderResults(filterText = "") {
-   // let resultHTML = "";
+     let filteredHTML = ""; // 🔥 مهم
 
     data.results
     .filter(r => {
         const text = filterText.toLowerCase();
         return (
-            r.userId.toLowerCase().includes(text) ||
+            r.userId.toString().toLowerCase().includes(text) ||
             r.numbers.toString().toLowerCase().includes(text)
         );
     })
@@ -1161,14 +1161,15 @@ function renderResults(filterText = "") {
         else if(r.matches == 8) bgColor = "#2a5298";
         else if(r.matches == 200) bgColor = "#4CAF50";
 
-        resultHTML += "<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "
+        filteredHTML += "<h4 style='color:white;background:"+bgColor+"; padding:8px; border-radius:5px;'>Player: "
         + r.userId + " | Grid: ["
         + r.numbers + "] | Win: "
         + roundTo(r.matches * pointa, 2).toFixed(2) + " $</h4>";
 
     });
 
-   // resultsDiv.innerHTML = resultHTML;
+    document.getElementById("results").innerHTML =
+        resultHTML + filteredHTML;
 }
 			
 				searchInput.addEventListener("input", function() {
@@ -1177,7 +1178,7 @@ function renderResults(filterText = "") {
 				
 				document.getElementById("results").style.display="block";
                 document.getElementById("results").innerHTML = resultHTML;
-				
+				const searchInput = document.getElementById("searchInput");
                 document.getElementById("results").scrollIntoView({
                     behavior:"smooth"
                 });
