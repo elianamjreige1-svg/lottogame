@@ -1115,7 +1115,7 @@ document.getElementById("join").disabled=true;
                 <span style='color:#4CAF50'>3 matches = 200 LP</span>
                 </h3>
 
-                <br><h2>Results of 
+                <br><h2 style="display:inline">Results</h2>
                 `;
 			//	const d = new Date();
 				
@@ -1125,7 +1125,7 @@ document.getElementById("join").disabled=true;
     let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
     const time = hours.toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') +" " + ampm;
-resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time +"</h2>";
+resultHTML+="📅"+now.getDate().toString().padStart(2,'0')+"/"+(now.getMonth()+1).toString().padStart(2,'0')+"/"+now.getFullYear()+"  ⏰"+time;
                 data.results.forEach(r => {
 
                     let bgColor="gray";
