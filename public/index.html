@@ -1170,7 +1170,7 @@ function renderResults(filterText = "") {
 
    // resultsDiv.innerHTML = resultHTML;
 }
-renderResults();				
+			
 				searchInput.addEventListener("input", function() {
     renderResults(this.value);
 });
@@ -1186,6 +1186,7 @@ renderResults();
               //  await playresult();
 				stoppreres();
 playresult();
+				renderResults();	
 			document.getElementById("join").disabled=false;	
                 return;
             }
