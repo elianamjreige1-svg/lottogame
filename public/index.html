@@ -1171,14 +1171,14 @@ function renderResults(filterText = "") {
     document.getElementById("results").innerHTML =
         resultHTML + filteredHTML;
 }
-			
+			const searchInput = document.getElementById("searchInput");
 				searchInput.addEventListener("input", function() {
     renderResults(this.value);
 });
 				
 				document.getElementById("results").style.display="block";
                 document.getElementById("results").innerHTML = resultHTML;
-				const searchInput = document.getElementById("searchInput");
+				
                 document.getElementById("results").scrollIntoView({
                     behavior:"smooth"
                 });
