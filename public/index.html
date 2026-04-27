@@ -6,7 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+#searchInput {
+    border: 1px solid #aaa;   /* 🔥 يظهر من البداية */
+    padding: 6px;
+    width: 250px;
+    border-radius: 6px;
+    background-color: white;   /* مهم جدًا */
+    outline: none;
+}
 
+#searchInput:focus {
+    border: 1px solid #ff9800;
+    box-shadow: 0 0 5px rgba(255,152,0,0.5);
+}
 /* Body */
 body{
     font-family:Arial, sans-serif;
