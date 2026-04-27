@@ -1156,7 +1156,8 @@ function renderResults(filterText = "") {
     const text = filterText.toLowerCase();
 
     data.results
-    .filter(r => {
+    .filter(r => { 
+		html="";
         const win = (r.matches * pointa).toString();
 
         return (
