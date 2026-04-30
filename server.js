@@ -360,7 +360,7 @@ async function startServer() {
       winprice = 0;
     }
 
-  //  log("winprice=" + winprice);
+   log("winprice= " + winprice);
 
    const PORT = process.env.PORT || 3000;
 
