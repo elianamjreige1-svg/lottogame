@@ -147,7 +147,7 @@ app.delete("/users/:username", async (req, res) => {
 // ================= GAME =================
 
 // START
-app.get("/start", async (req, res) => {
+app.get("/start", async () => {
 	//startServer();
 	const [results] = await query('SELECT * FROM lottoprice where id=1');
 
@@ -170,7 +170,7 @@ app.get("/start", async (req, res) => {
 
     log("Game started");
 	io.emit("announce", { ancmtmsg: "done" });*/
-    res.send("ok");
+  //  res.send("ok");
 });
 let jackpot=0;
 app.post("/ticket", async (req, res) => {
