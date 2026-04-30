@@ -148,7 +148,8 @@ app.delete("/users/:username", async (req, res) => {
 
 // START
 app.get("/start", async (req, res) => {
-    canplay = true;
+	log("winprice = "+winprice);
+  /*  canplay = true;
     tickets = [];
     resultsbyuser = [];
     winprice = 0;
@@ -157,7 +158,7 @@ app.get("/start", async (req, res) => {
 
     log("Game started");
 	io.emit("announce", { ancmtmsg: "done" });
-    res.send("ok");
+    res.send("ok");*/
 });
 let jackpot=0;
 app.post("/ticket", async (req, res) => {
@@ -360,7 +361,7 @@ async function startServer() {
       winprice = 0;
     }
 
-   log("winprice= " + winprice);
+//   log("winprice= " + winprice);
 
    const PORT = process.env.PORT || 3000;
 
