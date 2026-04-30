@@ -352,7 +352,7 @@ app.get("/again", async (req, res) => {
     winprice = 0;
   }
 //jackpot=winprice;
-  //log("winprice again=" + winprice);
+  log("winprice = " + winprice);
 
 } catch (err) {
   console.error(err);
