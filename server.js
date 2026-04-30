@@ -159,7 +159,7 @@ app.get("/start", async (req, res) => {
 		log("winprice = 0");
      // winprice = 0;
 	  
-	}*/
+	}
 	//log("winprice = hi");
   /*  canplay = true;
     tickets = [];
