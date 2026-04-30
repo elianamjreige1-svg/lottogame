@@ -148,6 +148,7 @@ app.delete("/users/:username", async (req, res) => {
 
 // START
 app.get("/start", async (req, res) => {
+	startServer();
 	log("winprice = "+winprice);
   /*  canplay = true;
     tickets = [];
