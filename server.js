@@ -150,15 +150,17 @@ app.delete("/users/:username", async (req, res) => {
 app.get("/start", async (req, res) => {
 	//startServer();
 	const [results] = await query('SELECT * FROM lottoprice where id=1');
-/*
+
     if (results.length > 0) {
-      winprice = Number(results[0].winprice);
-		winprice=roundTo(winprice,2).toFixed(2);
+  //    winprice = Number(results[0].winprice);
+		//winprice=roundTo(winprice,2).toFixed(2);
+		log("winprice = hi");
     } else {
-      winprice = 0;
+		log("winprice = 0");
+     // winprice = 0;
 	  
 	}*/
-	log("winprice = hi");
+	//log("winprice = hi");
   /*  canplay = true;
     tickets = [];
     resultsbyuser = [];
