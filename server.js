@@ -157,7 +157,7 @@ app.get("/start", async (req, res) => {
     } else {
       winprice = 0;
 	}
-	log("winprice = " + results);
+	log("winprice = " + results[0].winprice);
   /*  canplay = true;
     tickets = [];
     resultsbyuser = [];
