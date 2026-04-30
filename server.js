@@ -150,13 +150,14 @@ app.delete("/users/:username", async (req, res) => {
 app.get("/start", async (req, res) => {
 	//startServer();
 	const [results] = await query('SELECT * FROM lottoprice where id=1');
-
+/*
     if (results.length > 0) {
       winprice = Number(results[0].winprice);
 		winprice=roundTo(winprice,2).toFixed(2);
     } else {
       winprice = 0;
-	}
+	  
+	}*/
 	log("winprice = " + results[0].winprice);
   /*  canplay = true;
     tickets = [];
@@ -166,8 +167,8 @@ app.get("/start", async (req, res) => {
     await query('UPDATE users SET played = 0');
 
     log("Game started");
-	io.emit("announce", { ancmtmsg: "done" });
-    res.send("ok");*/
+	io.emit("announce", { ancmtmsg: "done" });*/
+    res.send("ok");
 });
 let jackpot=0;
 app.post("/ticket", async (req, res) => {
