@@ -102,9 +102,9 @@ section {
 
 <section>
 <h2>Game</h2>
-
+<button id="start" onclick="start()">Start</button>
 <button id="draw" onclick="draw()" disabled>Draw Balls</button>
-<button id="again" onclick="again()">Open Game</button>
+<button id="again" onclick="again() disabled">Open Game</button>
 </section>
 
 <section>
@@ -255,9 +255,11 @@ if(confirm("Are you sure you want to delete this user?")){
 }
 }
 
-function startGame() {
-if(confirm("Are you sure to start the game?"))
+function start() {
+//if(confirm("Are you sure to start the game?"))
     fetch("/start");
+   document.getElementById("draw").disabled=false;
+    document.getElementById("start").disabled=true; 
 }
 
 function draw() {
