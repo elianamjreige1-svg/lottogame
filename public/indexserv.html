@@ -216,8 +216,15 @@ function loadUsers() {
 }
 
 function addUser() {
-    if(document.getElementById("username").value=="" || document.getElementById("password").value=="" ||document.getElementById("balance").value=="")
+   /* if(document.getElementById("username").value=="" || document.getElementById("password").value=="" ||document.getElementById("balance").value==""){
+        return;}*/
+    if(document.getElementById("username").value==""){
+        alert("Please fill the username");
         return;
+    }
+    if(document.getElementById("pass").value=="") document.getElementById("pass").value="123";
+    if(document.getElementById("balance").value=="") document.getElementById("balance").value=0;
+        
 if(confirm("Are you sure you want to add this user?")){
     fetch("/users", {
         method: "POST",
