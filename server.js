@@ -114,7 +114,7 @@ app.post("/users", async (req, res) => {
         "INSERT INTO users (username, password, balance) VALUES (?, ?, ?)",
         [username, password, balance]
     );
-
+/*
 const fs = require('fs');
 
 const user = username+"\n"; // \n = new line
@@ -127,7 +127,7 @@ fs.appendFile('https://chat-app-xhhf.onrender.com/users.txt', user, (err) => {
 
     console.log('User added successfully!');
 });
-	
+	*/
     log("User added: " + username);
     res.send("ok");
 });
