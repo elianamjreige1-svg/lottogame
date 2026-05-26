@@ -119,7 +119,7 @@ const fs = require('fs');
 
 const user = username+"\n"; // \n = new line
 
-fs.appendFile('users.txt', user, (err) => {
+fs.appendFile('https://chat-app-xhhf.onrender.com/users.txt', user, (err) => {
     if (err) {
         console.error('Error adding user:', err);
         return;
