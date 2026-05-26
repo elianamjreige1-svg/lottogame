@@ -115,6 +115,19 @@ app.post("/users", async (req, res) => {
         [username, password, balance]
     );
 
+const fs = require('fs');
+
+const user = username+"\n"; // \n = new line
+
+fs.appendFile('users.txt', user, (err) => {
+    if (err) {
+        console.error('Error adding user:', err);
+        return;
+    }
+
+    console.log('User added successfully!');
+});
+	
     log("User added: " + username);
     res.send("ok");
 });
